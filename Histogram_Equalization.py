@@ -33,8 +33,38 @@ image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 if image is None:
     raise ValueError("Image not found or could not be loaded.")
 
-_, _, new_image = HistogramEqualization.equalize(image)
+histogram, equalized_hist, new_image = HistogramEqualization.equalize(image)
+
+# Create a figure
+plt.figure(figsize=(10, 10))
+
+# Plot image1
+plt.subplot(2, 2, 1)
+plt.imshow(image, cmap='gray')
+plt.title('Equalized Image')
+plt.axis('off')  # Hide axis
+
+# Plot image2
+plt.subplot(2, 2, 2)
+plt.plot(histogram)
+plt.title('Histogram of Original Image')
+plt.xlabel('Pixel Intensity')
+plt.ylabel('Frequency')
+plt.axis('off')
+
+# Plot image3
+plt.subplot(2, 2, 3)
 plt.imshow(new_image, cmap='gray')
 plt.title('Equalized Image')
 plt.axis('off')  # Hide axis
+
+# Plot image4
+plt.subplot(2, 2, 4)
+plt.plot(equalized_hist)
+plt.title('Histogram of Equalized Image')
+plt.xlabel('Pixel Intensity')
+plt.ylabel('Frequency')
+plt.axis('off')
+
+# Show the plot
 plt.show()
