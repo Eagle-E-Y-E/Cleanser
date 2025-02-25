@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-class Hisogram_Equalization:
+class HistogramEqualization:
     @staticmethod
     def compute_histogram(image):
         histogram = np.zeros(256, dtype=int)
@@ -11,30 +11,29 @@ class Hisogram_Equalization:
         return histogram
 
     @staticmethod
-    def compute_CDF(histogram):
-        cdf_norm = np.cumsum(histogram) / np.sum(histogram) 
+    def compute_CDF(histogram, grey_levels=256):
+        cdf = np.cumsum(histogram)
+        cdf_norm = np.round(cdf / cdf[-1] * (grey_levels - 1)).astype(int)
         return cdf_norm
 
     @staticmethod
-    def equalize(image, grey_levels=255):
+    def equalize(image, grey_levels=256):
         image_shape = image.shape
-        flatten_image = image.flatten()
-        histogram = Hisogram_Equalization.compute_histogram(flatten_image)
-        cdf_norm = Hisogram_Equalization.compute_CDF(histogram)
-        equalized_values = np.round(cdf_norm * (grey_levels - 1)).astype(int)
+        histogram = HistogramEqualization.compute_histogram(image)
+        cdf_norm = HistogramEqualization.compute_CDF(histogram, grey_levels)
         equalized_hist = np.zeros(grey_levels, dtype=int)
         for i in range(grey_levels):
-            equalized_hist[equalized_values[i]] += histogram[i]
-        new_flattened_image = equalized_values[flatten_image]
+            equalized_hist[cdf_norm[i]] += histogram[i]
+        new_flattened_image = cdf_norm[image]
         new_image = new_flattened_image.reshape(image_shape)
-        return equalized_hist, new_image
+        return histogram, equalized_hist, new_image
 
-image_path = 'ED-image1.png'
+image_path = 'dark.jpg'
 image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 if image is None:
     raise ValueError("Image not found or could not be loaded.")
 
-_, new_image = Hisogram_Equalization.equalize(image, 8)
+_, _, new_image = HistogramEqualization.equalize(image)
 plt.imshow(new_image, cmap='gray')
 plt.title('Equalized Image')
 plt.axis('off')  # Hide axis
