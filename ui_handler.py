@@ -7,6 +7,22 @@ import numpy as np
 from add_noise import add_gaussian_noise, add_salt_pepper_noise, add_uniform_noise
 from apply_filter import apply_average_filter, apply_gaussian_filter, apply_median_filter
 
+# ui_names:
+# - image1
+# - output_image
+# - apply_noise_btn
+# - apply_filter_btn
+# - noise_type_combo
+# - filter_combo
+# - kernel_size_slider
+# - kernel_size_label
+# - convert_to_grayscale_btn
+# - equalize_image_btn
+# - edge_detection_method_combo
+# - detect_edges_btn
+# - histogram_1
+# - histogram_2
+
 class UIHandler:
     def __init__(self, main_window):
         self.main_window = main_window

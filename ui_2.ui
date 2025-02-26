@@ -664,7 +664,7 @@ border-color: rgb(0, 0, 127);</string>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton">
+               <widget class="QPushButton" name="equalize_image_btn">
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
