@@ -13,24 +13,10 @@ class Hybrid:
         Returns:
         - kernel: 2D list representing the Gaussian kernel.
         """
-        kernel = []
-        center = size // 2
-        total = 0
-
-        for x in range(size):
-            row = []
-            for y in range(size):
-                exponent = -((x - center) ** 2 + (y - center) ** 2) / (2 * sigma ** 2)
-                value = (1 / (2 * np.pi * sigma ** 2)) * np.exp(exponent)
-                row.append(value)
-                total += value
-            kernel.append(row)
-
-        # Normalize the kernel
-        for x in range(size):
-            for y in range(size):
-                kernel[x][y] /= total
-
+        ax = np.arange(-size // 2 + 1., size // 2 + 1.)
+        xx, yy = np.meshgrid(ax, ax)
+        kernel = np.exp(-(xx**2 + yy**2) / (2. * sigma**2))
+        kernel = kernel / np.sum(kernel)
         return kernel
 
     @staticmethod
@@ -45,40 +31,43 @@ class Hybrid:
         Returns:
         - convolved_image: numpy array of the filtered image.
         """
+        # Ensure kernel is a NumPy array
+        kernel = np.array(kernel)
+        k_size = kernel.shape[0]
+        pad = k_size // 2
+
+        # Pad the image manually using NumPy
         if len(image.shape) == 2:
             # Grayscale image
+            image_padded = np.pad(image, pad, mode='constant', constant_values=0)
             height, width = image.shape
             channels = 1
         else:
             # Color image
+            image_padded = np.pad(image, ((pad, pad), (pad, pad), (0, 0)), mode='constant', constant_values=0)
             height, width, channels = image.shape
 
-        k_size = len(kernel)
-        pad = k_size // 2
-        # Pad the image for each channel
-        if channels == 1:
-            padded_image = np.pad(image, pad, mode='edge')
-        else:
-            padded_image = np.pad(image, ((pad, pad), (pad, pad), (0, 0)), mode='edge')
+        # Prepare an empty array for the convolved image
+        convolved_image = np.zeros_like(image, dtype=np.float32)
 
-        convolved_image = np.zeros_like(image)
+        # Flip the kernel (convolution operation)
+        kernel_flipped = np.flipud(np.fliplr(kernel))
 
+        # Vectorized convolution operation
         for c in range(channels):
             for i in range(height):
                 for j in range(width):
-                    acc = 0
-                    for ki in range(k_size):
-                        for kj in range(k_size):
-                            pi = i + ki
-                            pj = j + kj
-                            if channels == 1:
-                                acc += padded_image[pi, pj] * kernel[ki][kj]
-                            else:
-                                acc += padded_image[pi, pj, c] * kernel[ki][kj]
+                    # Extract the region of interest
                     if channels == 1:
-                        convolved_image[i, j] = acc
+                        region = image_padded[i:i+k_size, j:j+k_size]
                     else:
-                        convolved_image[i, j, c] = acc
+                        region = image_padded[i:i+k_size, j:j+k_size, c]
+
+                    # Perform element-wise multiplication and sum the result
+                    convolved_value = np.sum(region * kernel_flipped)
+                    convolved_image[i, j] = convolved_value if channels == 1 else convolved_value
+
+        # If the image has multiple channels, stack them back together
         return convolved_image
 
     @staticmethod
