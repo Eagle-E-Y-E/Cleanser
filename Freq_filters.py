@@ -1,63 +1,40 @@
 import math
 import cmath
+import cv2
+import numpy as np
 
 class Freq_filters:
     @staticmethod
     def DFT_2D(image):
-        M = len(image)        # Number of rows (height)
-        N = len(image[0])     # Number of columns (width)
-        F = [[0 for _ in range(N)] for _ in range(M)]
-        
-        for u in range(M):
-            for v in range(N):
-                sum_value = 0
-                for y in range(M):
-                    for x in range(N):
-                        angle = -2 * math.pi * ((u * y) / M + (v * x) / N)
-                        exponent = cmath.exp(complex(0, angle))
-                        sum_value += image[y][x] * exponent
-                F[u][v] = sum_value
+        # Apply 2D FFT using NumPy
+        F = np.fft.fft2(image)
         return F
 
     @staticmethod
     def create_filter(M, N, D0, filter_type='low'):
-        H = [[0 for _ in range(N)] for _ in range(M)]
-        center_u, center_v = M // 2, N // 2
-        for u in range(M):
-            for v in range(N):
-                D = math.sqrt((u - center_u) ** 2 + (v - center_v) ** 2)
-                if filter_type == 'low':
-                    H[u][v] = 1 if D <= D0 else 0
-                elif filter_type == 'high':
-                    H[u][v] = 0 if D <= D0 else 1
+        # Create a meshgrid for frequency domain coordinates
+        u = np.arange(M)
+        v = np.arange(N)
+        U, V = np.meshgrid(u, v, indexing='ij')
+        D = np.sqrt((U - M//2)**2 + (V - N//2)**2)
+        
+        if filter_type == 'low':
+            H = np.where(D <= D0, 1, 0)
+        elif filter_type == 'high':
+            H = np.where(D > D0, 1, 0)
         return H
     
     @staticmethod
     def apply_filter(F, H):
-        M = len(F)
-        N = len(F[0])
-        G = [[0 for _ in range(N)] for _ in range(M)]
-        for u in range(M):
-            for v in range(N):
-                G[u][v] = F[u][v] * H[u][v]
+        # Element-wise multiplication
+        G = F * H
         return G
 
     @staticmethod
     def IDFT_2D(F):
-        M = len(F)
-        N = len(F[0])
-        image = [[0 for _ in range(N)] for _ in range(M)]
-        
-        for y in range(M):
-            for x in range(N):
-                sum_value = 0
-                for u in range(M):
-                    for v in range(N):
-                        angle = 2 * math.pi * ((u * y) / M + (v * x) / N)
-                        exponent = cmath.exp(complex(0, angle))
-                        sum_value += F[u][v] * exponent
-                image[y][x] = (1 / (M * N)) * sum_value.real  # Take the real part
-        return image  # Return the reconstructed image
+        # Apply 2D inverse FFT using NumPy
+        image = np.fft.ifft2(F)
+        return image.real  # Return the real part
     
     @staticmethod
     def normalize_image(image):
@@ -70,3 +47,9 @@ class Freq_filters:
             for x in range(N):
                 normalized[y][x] = ((image[y][x] - min_val) / (max_val - min_val)) * 255
         return normalized
+    
+    # @staticmethod
+    # def normalize_image(image):
+    #     # Normalize the image to the range 0-255
+    #     normalized = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX)
+    #     return normalized
