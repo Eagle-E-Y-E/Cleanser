@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1073</width>
-    <height>600</height>
+    <width>1246</width>
+    <height>740</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -663,6 +663,19 @@ border-color: rgb(0, 0, 127);</string>
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QPushButton" name="pushButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>25</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Equalize image</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>
@@ -836,7 +849,7 @@ QGroupBox::title {
              </widget>
             </item>
             <item>
-             <widget class="QGraphicsView" name="graphicsView">
+             <widget class="QGraphicsView" name="histogram_1">
               <property name="maximumSize">
                <size>
                 <width>250</width>
@@ -844,6 +857,9 @@ QGroupBox::title {
                </size>
               </property>
              </widget>
+            </item>
+            <item>
+             <widget class="QGraphicsView" name="histogram_2"/>
             </item>
            </layout>
           </item>
@@ -1035,7 +1051,7 @@ border-color: rgb(0, 0, 127);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1073</width>
+     <width>1246</width>
      <height>17</height>
     </rect>
    </property>

@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Thresholding:
     @staticmethod
     def global_thresholding(image, threshold):
@@ -12,10 +13,11 @@ class Thresholding:
 
         Returns:
         - A new image array after applying global thresholding.
-        """      
+        """
         # Apply thresholding using NumPy vectorization
         thresholded_image = (image > threshold) * 255
-        thresholded_image = thresholded_image.astype('uint8')   # ensures the image has the correct data type for saving and displaying
+        # ensures the image has the correct data type for saving and displaying
+        thresholded_image = thresholded_image.astype('uint8')
         return thresholded_image
 
     @staticmethod
@@ -58,7 +60,7 @@ class Thresholding:
                 thresholded_image[y, x] = 255 if image[y, x] > T_local else 0
 
         return thresholded_image
-    
+
     @staticmethod
     def bradley_localThreshold(image, window_size=15, p=0.15):
         """
@@ -104,5 +106,3 @@ class Thresholding:
                     binary_image[i, j] = 0
 
         return binary_image
-
-    
