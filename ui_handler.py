@@ -1,11 +1,13 @@
 from PyQt5.QtCore import Qt
 from PyQt5 import QtWidgets, uic
-from PyQt5.QtGui import QPixmap, QImage
-from PyQt5.QtWidgets import QFileDialog, QGraphicsScene
+from PyQt5.QtGui import QPixmap, QImage, QPainter
+from PyQt5.QtWidgets import QFileDialog, QGraphicsScene, QGraphicsPixmapItem
 import cv2
 import numpy as np
 from add_noise import add_gaussian_noise, add_salt_pepper_noise, add_uniform_noise
 from apply_filter import apply_average_filter, apply_gaussian_filter, apply_median_filter
+from Histogram_Equalization import HistogramEqualization
+import matplotlib.pyplot as plt
 
 # ui_names:
 # - image1
@@ -36,6 +38,8 @@ class UIHandler:
             QtWidgets.QLabel, 'image1')
         self.output_image_view = self.main_window.findChild(
             QtWidgets.QGraphicsView, 'output_image')
+        self.original_histogram = self.main_window.findChild(QtWidgets.QGraphicsView, 'histogram_1')
+        self.equalized_histogram = self.main_window.findChild(QtWidgets.QGraphicsView, 'histogram_2')
         self.image_label.setAlignment(Qt.AlignCenter)
 
         self.image_label.mouseDoubleClickEvent = self.open_image
@@ -47,6 +51,8 @@ class UIHandler:
         self.main_window.noise_intensity_slider.valueChanged.connect(lambda: self.main_window.noise_intensity_label.setText(
             f"{self.main_window.noise_intensity_slider.value()}"))
         self.image = None
+        self.gray_image = None
+        self.main_window.equalize_image_btn.clicked.connect(self.equalize_image)
         self.kernel_size = 3
 
     def open_image(self, event):
@@ -61,6 +67,7 @@ class UIHandler:
             self.image_label.setScaledContents(False)
 
             self.image = cv2.imread(file_name, cv2.IMREAD_COLOR)
+            self.gray_image = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
 
     def update_kernel_size(self):
         self.kernel_size = self.main_window.kernel_size_slider.value()
@@ -82,7 +89,7 @@ class UIHandler:
         else:
             return
 
-        self.display_image(noisy_image)
+        self.display_image(self.output_image_view, noisy_image)
 
     def apply_filter(self):
         if self.image is None:
@@ -97,16 +104,52 @@ class UIHandler:
             filtered_image = apply_median_filter(self.image, self.kernel_size)
         else:
             return
-        self.display_image(filtered_image)
+        self.display_image(self.output_image_view, filtered_image)
 
-    def display_image(self, image):
-        height, width, channel = image.shape
-        bytes_per_line = 3 * width
-        q_image = QImage(image.data, width, height,
-                         bytes_per_line, QImage.Format_RGB888).rgbSwapped()
-        pixmap = QPixmap.fromImage(q_image)
+    def display_image(self, view, image):
+        pixmap = self.convert_cv_to_pixmap(image)
         scene = QGraphicsScene()
         scene.addPixmap(pixmap)
-        self.output_image_view.setScene(scene)
-        self.output_image_view.fitInView(
+        view.setScene(scene)
+        view.fitInView(
             scene.itemsBoundingRect(), Qt.KeepAspectRatio)
+
+        
+
+    def plot_histogram(self, data):
+        fig, ax = plt.subplots(figsize=(5, 4), dpi=150)
+        ax.plot(data, color='blue')  # Black color for grayscale consistency
+        ax.set_title('Histogram')
+        ax.set_xlabel('Pixel Intensity')
+        ax.set_ylabel('Frequency')
+        fig.canvas.draw()
+        width, height = fig.canvas.get_width_height()
+        img = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8).reshape(height, width, 3)
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # Convert to grayscale
+        
+        plt.close(fig)  # Close the figure to prevent memory leaks
+        return img
+
+    def convert_cv_to_pixmap(self, cv_img):
+        """ Converts an OpenCV image to QPixmap (automatically detects grayscale or RGB) """
+        if len(cv_img.shape) == 2:  # Grayscale
+            height, width = cv_img.shape
+            bytes_per_line = width
+            q_img = QImage(cv_img.data, width, height, bytes_per_line, QImage.Format_Grayscale8)
+        else:  # RGB
+            height, width, channel = cv_img.shape
+            bytes_per_line = 3 * width
+            q_img = QImage(cv_img.data, width, height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
+        
+        return QPixmap.fromImage(q_img)
+
+    def equalize_image(self):
+        histogram, equalized_hist, new_image = HistogramEqualization.equalize(self.gray_image)
+        # Plot histograms as images
+        hist_pixmap = self.plot_histogram(histogram)
+        equalized_hist_pixmap = self.plot_histogram(equalized_hist)
+
+        # Display in respective QGraphicsView widgets
+        self.display_image(self.original_histogram, hist_pixmap)
+        self.display_image(self.equalized_histogram, equalized_hist_pixmap)
+        self.display_image(self.output_image_view, new_image)
