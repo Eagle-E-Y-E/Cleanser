@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import QPixmap, QImage, QPainter
 from PyQt5.QtWidgets import QFileDialog, QGraphicsScene, QGraphicsPixmapItem
+from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphicsPixmapItem, QLabel, QVBoxLayout, QWidget
 import cv2
 import numpy as np
 from add_noise import add_gaussian_noise, add_salt_pepper_noise, add_uniform_noise
@@ -55,6 +56,11 @@ class UIHandler:
         self.main_window.kernel_size_slider.setValue(3)
         self.main_window.noise_intensity_slider.valueChanged.connect(lambda: self.main_window.noise_intensity_label.setText(
             f"{self.main_window.noise_intensity_slider.value()}"))
+        
+        self.main_window.histogram_1.mouseDoubleClickEvent = self.show_large_image
+        self.large_image_dialog = None
+
+
 
         self.main_window.mix_btn.clicked.connect(self.mix_images)
         # Add references to image mix labels if not already initialized
@@ -128,8 +134,31 @@ class UIHandler:
 
             self.image = cv2.imread(file_name, cv2.IMREAD_COLOR)
             self.gray_image = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
+            self.rgb_hist(self.image)
 
-    def update_kernel_size(self):
+    def show_large_image(self, event):
+        # Get the scene from the QGraphicsView
+        scene = self.main_window.histogram_1.scene()
+        if scene is not None:
+            # Iterate through the items in the scene to find the QGraphicsPixmapItem
+            for item in scene.items():
+                if isinstance(item, QGraphicsPixmapItem):
+                    print('Showing large image')
+                    dialog = QWidget()
+                    dialog.setWindowTitle("Large Image")
+                    layout = QVBoxLayout()
+
+                    label = QLabel()
+                    label.setPixmap(item.pixmap().scaled(600, 600, Qt.KeepAspectRatio))  # Scale it larger
+                    label.setAlignment(Qt.AlignCenter)
+
+                    layout.addWidget(label)
+                    dialog.setLayout(layout)
+                    dialog.resize(650, 650)
+                    dialog.show()
+                    return  # Exit after showing the first found pixmap item
+        print('No QGraphicsPixmapItem found in the scene')
+    def update_kernel_size(self, event):
         self.kernel_size = self.main_window.kernel_size_slider.value()
         self.main_window.kernel_size_label.setText(f"{self.kernel_size}")
 
@@ -311,16 +340,22 @@ class UIHandler:
         G_cdf = RGB_Hist.compute_cdf(G_histogram)
         B_cdf = RGB_Hist.compute_cdf(B_histogram)
 
+        
         # Plot histograms and CDFs
-        RGB_Hist.plot_histogram(R_histogram, 'Red')
-        RGB_Hist.plot_histogram(G_histogram, 'Green')
-        RGB_Hist.plot_histogram(B_histogram, 'Blue')
+        self.display_image(self.main_window.histogram_1,RGB_Hist.plot_histogram(R_histogram, 'Red'))
+        self.display_image(self.main_window.histogram_2,RGB_Hist.plot_histogram(G_histogram, 'Green'))
+        self.display_image(self.main_window.histogram_3,RGB_Hist.plot_histogram(B_histogram, 'Blue'))
+        self.display_image(self.main_window.histogram_4,RGB_Hist.plot_combined_cdf(R_cdf, G_cdf, B_cdf))
 
-        # Plot combined CDFs
-        RGB_Hist.plot_combined_cdf(R_cdf, G_cdf, B_cdf)
 
-        # display the image
-        self.display_image(self.output_image_view, image)
+        # RGB_Hist.plot_histogram(G_histogram, 'Green')
+        # RGB_Hist.plot_histogram(B_histogram, 'Blue')
+
+        # # Plot combined CDFs
+        # RGB_Hist.plot_combined_cdf(R_cdf, G_cdf, B_cdf)
+
+        # # display the image
+        # self.display_image(self.output_image_view, image)
 
         return R_cdf, G_cdf, B_cdf
 

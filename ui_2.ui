@@ -1375,7 +1375,7 @@ QGroupBox::title {
              <widget class="QGraphicsView" name="histogram_1">
               <property name="maximumSize">
                <size>
-                <width>250</width>
+                <width>350</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -1385,7 +1385,7 @@ QGroupBox::title {
              <widget class="QGraphicsView" name="histogram_2">
               <property name="maximumSize">
                <size>
-                <width>250</width>
+                <width>350</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -1395,7 +1395,7 @@ QGroupBox::title {
              <widget class="QGraphicsView" name="histogram_3">
               <property name="maximumSize">
                <size>
-                <width>250</width>
+                <width>350</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -1405,7 +1405,7 @@ QGroupBox::title {
              <widget class="QGraphicsView" name="histogram_4">
               <property name="maximumSize">
                <size>
-                <width>250</width>
+                <width>350</width>
                 <height>16777215</height>
                </size>
               </property>

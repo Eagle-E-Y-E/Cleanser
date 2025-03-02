@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import cv2
+import numpy as np
 
 class RGB_Hist:
     @staticmethod
@@ -71,22 +73,20 @@ class RGB_Hist:
         return cdf
 
     @staticmethod
-    def plot_histogram(histogram, channel_name):
-        """
-        Plots a histogram for the given channel using Matplotlib.
-
-        Parameters:
-        - histogram: The histogram list.
-        - channel_name: Name of the color channel.
-        """
-        plt.figure(figsize=(10, 4))
-        plt.bar(range(256), histogram, color=channel_name.lower(), alpha=0.7)
-        plt.title(f'Histogram for {channel_name} Channel')
-        plt.xlabel('Intensity Value')
-        plt.ylabel('Frequency')
-        plt.xlim(0, 255)
-        plt.grid(True)
-        plt.show()
+    def plot_histogram(histogram, color):
+        fig, ax = plt.subplots(figsize=(10, 8), dpi=150)
+        ax.bar(range(256), histogram, color=color.lower(), alpha=0.7)
+        ax.set_title(f'{color} Histogram')
+        ax.set_xlabel('Pixel Intensity')
+        ax.set_ylabel('Frequency')
+        ax.set_xlim(0, 255)
+        ax.grid(True)
+        fig.canvas.draw()
+        width, height = fig.canvas.get_width_height()
+        img = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8).reshape(height, width, 3)
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        plt.close(fig)
+        return img
 
     @staticmethod
     def plot_cdf(cdf, channel_name):
@@ -131,26 +131,20 @@ class RGB_Hist:
 
     @staticmethod
     def plot_combined_cdf(R_cdf, G_cdf, B_cdf):
-        """
-        Plots the combined CDFs of the R, G, and B channels.
-
-        Parameters:
-        - R_cdf: CDF list for the Red channel.
-        - G_cdf: CDF list for the Green channel.
-        - B_cdf: CDF list for the Blue channel.
-        """
-        plt.figure(figsize=(10, 4))
-        plt.plot(range(256), R_cdf, color='red', label='Red')
-        plt.plot(range(256), G_cdf, color='green', label='Green')
-        plt.plot(range(256), B_cdf, color='blue', label='Blue')
-        plt.title('Combined RGB CDFs')
-        plt.xlabel('Intensity Value')
-        plt.ylabel('Cumulative Probability')
-        plt.xlim(0, 255)
-        plt.ylim(0, 1)
-        plt.legend()
-        plt.grid(True)
-        plt.show()
+        fig, ax = plt.subplots(figsize=(5, 4), dpi=150)
+        ax.plot(R_cdf, color='red', label='Red CDF')
+        ax.plot(G_cdf, color='green', label='Green CDF')
+        ax.plot(B_cdf, color='blue', label='Blue CDF')
+        ax.set_title('Combined CDF')
+        ax.set_xlabel('Pixel Intensity')
+        ax.set_ylabel('Cumulative Frequency')
+        ax.legend()
+        fig.canvas.draw()
+        width, height = fig.canvas.get_width_height()
+        img = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8).reshape(height, width, 3)
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        plt.close(fig)
+        return img
 
     @staticmethod
     def histogram_equalization(channel_values, cdf):
