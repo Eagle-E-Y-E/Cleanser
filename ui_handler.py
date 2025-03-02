@@ -55,10 +55,65 @@ class UIHandler:
         self.main_window.kernel_size_slider.setValue(3)
         self.main_window.noise_intensity_slider.valueChanged.connect(lambda: self.main_window.noise_intensity_label.setText(
             f"{self.main_window.noise_intensity_slider.value()}"))
+
+        self.main_window.mix_btn.clicked.connect(self.mix_images)
+        # Add references to image mix labels if not already initialized
+        self.image1_mix = self.main_window.findChild(QtWidgets.QLabel, 'image1_mix')
+        self.image2_mix = self.main_window.findChild(QtWidgets.QLabel, 'image2_mix')
+        self.output_img_mix = self.main_window.findChild(QtWidgets.QLabel, 'output_img_mix')
+
+        # Initialize image storage variables
+        self.image1_for_mixing = None
+        self.image2_for_mixing = None
+
+        # Let users double-click to load images into the mixing panes
+        self.image1_mix.mouseDoubleClickEvent = self.open_image1_for_mixing
+        self.image2_mix.mouseDoubleClickEvent = self.open_image2_for_mixing
+
         self.image = None
         self.gray_image = None
         self.main_window.equalize_image_btn.clicked.connect(self.equalize_image)
         self.kernel_size = 3
+
+    def open_image1_for_mixing(self, event):
+        options = QtWidgets.QFileDialog.Options()
+        file_name, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self.main_window, "Select First Image for Mixing", "", "Image Files (*.png *.jpg *.bmp)", options=options)
+        if file_name:
+            pixmap = QPixmap(file_name)
+            self.image1_mix.setPixmap(pixmap.scaled(
+                self.image1_mix.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            self.image1_mix.setScaledContents(False)
+            self.image1_for_mixing = cv2.imread(file_name, cv2.IMREAD_COLOR)
+            # print(self.image1_for_mixing.shape)
+            # self.display_image(self.image2_mix, self.image1_for_mixing)
+
+
+    def open_image2_for_mixing(self, event):
+        options = QtWidgets.QFileDialog.Options()
+        file_name, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self.main_window, "Select Second Image for Mixing", "", "Image Files (*.png *.jpg *.bmp)", options=options)
+        if file_name:
+            pixmap = QPixmap(file_name)
+            self.image2_mix.setPixmap(pixmap.scaled(
+                self.image2_mix.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            self.image2_mix.setScaledContents(False)
+            self.image2_for_mixing = cv2.imread(file_name, cv2.IMREAD_COLOR)
+
+    def mix_images(self):
+        if self.image1_for_mixing is None or self.image2_for_mixing is None:
+            # Show error message or return silently
+            QtWidgets.QMessageBox.warning(self.main_window, "Warning", 
+                                        "Please load both images for mixing by double-clicking on the image areas.")
+            return
+        
+        # Get kernel size and sigma from UI or use default values
+        # You might want to add sliders for these parameters in your UI
+        kernel_size = 15  # Default or from a slider
+        sigma = 5.0      # Default or from a slider
+        
+        # Call the hybrid image function
+        self.hybrid_image(self.image1_for_mixing, self.image2_for_mixing, kernel_size, sigma)
 
     def open_image(self, event):
         options = QtWidgets.QFileDialog.Options()
@@ -237,7 +292,8 @@ class UIHandler:
         hybrid_image = np.array(hybrid_image, dtype=np.uint8)
 
         # display hybrid image
-        self.display_image(self.output_img_mix, hybrid_image)
+        pixmap = QPixmap(hybrid_image)
+        self.output_img_mix.setPixmap(pixmap.scaled(self.image_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def rgb_hist(self, image):
         
