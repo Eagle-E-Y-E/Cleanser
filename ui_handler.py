@@ -44,8 +44,10 @@ class UIHandler:
             QtWidgets.QLabel, 'image1')
         self.output_image_view = self.main_window.findChild(
             QtWidgets.QGraphicsView, 'output_image')
-        self.original_histogram = self.main_window.findChild(QtWidgets.QGraphicsView, 'histogram_1')
-        self.equalized_histogram = self.main_window.findChild(QtWidgets.QGraphicsView, 'histogram_2')
+        self.original_histogram = self.main_window.findChild(
+            QtWidgets.QGraphicsView, 'histogram_1')
+        self.equalized_histogram = self.main_window.findChild(
+            QtWidgets.QGraphicsView, 'histogram_2')
         self.image_label.setAlignment(Qt.AlignCenter)
 
         self.image_label.mouseDoubleClickEvent = self.open_image
@@ -54,21 +56,36 @@ class UIHandler:
         self.main_window.kernel_size_slider.valueChanged.connect(
             self.update_kernel_size)
         self.main_window.kernel_size_slider.setValue(3)
+        ## sliders
         self.main_window.noise_intensity_slider.valueChanged.connect(lambda: self.main_window.noise_intensity_label.setText(
             f"{self.main_window.noise_intensity_slider.value()}"))
-        
+        self.main_window.window_size_slider.valueChanged.connect(lambda: self.main_window.window_size_label.setText(
+            f"{self.main_window.window_size_slider.value()}"))
+        self.main_window.sensitivity_slider.valueChanged.connect(lambda: self.main_window.sensitivity_label.setText(
+            f"{self.main_window.sensitivity_slider.value()}"))
+        self.main_window.threshold_slider.valueChanged.connect(lambda: self.main_window.threshold_label.setText(
+            f"{self.main_window.threshold_slider.value()}"))
+        self.main_window.mixing_kenel_size_slider.valueChanged.connect(lambda: self.main_window.mixing_kenel_size_label.setText(
+            f"{self.main_window.mixing_kenel_size_slider.value()}"))
+        self.main_window.mixing_sensitivity_slider.valueChanged.connect(lambda: self.main_window.mixing_sensitivity_label.setText(
+            f"{self.main_window.mixing_sensitivity_slider.value()}"))
+
         self.main_window.histogram_1.mouseDoubleClickEvent = self.show_large_image
         self.large_image_dialog = None
-        self.main_window.thresholding_combo.currentIndexChanged.connect(self.thresholding_control)
+        self.main_window.thresholding_combo.currentIndexChanged.connect(
+            self.thresholding_control)
         self.main_window.Local_widget.hide()
-        self.main_window.convert_to_grayscale_btn.clicked.connect(self.apply_grayscale)
-
+        self.main_window.convert_to_grayscale_btn.clicked.connect(
+            self.apply_grayscale)
 
         self.main_window.mix_btn.clicked.connect(self.mix_images)
         # Add references to image mix labels if not already initialized
-        self.image1_mix = self.main_window.findChild(QtWidgets.QLabel, 'image1_mix')
-        self.image2_mix = self.main_window.findChild(QtWidgets.QLabel, 'image2_mix')
-        self.output_img_mix = self.main_window.findChild(QtWidgets.QLabel, 'output_img_mix')
+        self.image1_mix = self.main_window.findChild(
+            QtWidgets.QLabel, 'image1_mix')
+        self.image2_mix = self.main_window.findChild(
+            QtWidgets.QLabel, 'image2_mix')
+        self.output_img_mix = self.main_window.findChild(
+            QtWidgets.QLabel, 'output_img_mix')
 
         # Initialize image storage variables
         self.image1_for_mixing = None
@@ -80,8 +97,13 @@ class UIHandler:
 
         self.image = None
         self.gray_image = None
-        self.main_window.equalize_image_btn.clicked.connect(self.equalize_image)
+        self.main_window.equalize_image_btn.clicked.connect(
+            self.equalize_image)
         self.kernel_size = 3
+        self.window_size = self.main_window.window_size_slider.value()
+        self.sensitivity = self.main_window.sensitivity_slider.value()
+        self.threshold = self.main_window.threshold_slider.value()
+
 
     def open_image1_for_mixing(self, event):
         options = QtWidgets.QFileDialog.Options()
@@ -95,7 +117,6 @@ class UIHandler:
             self.image1_for_mixing = cv2.imread(file_name, cv2.IMREAD_COLOR)
             # print(self.image1_for_mixing.shape)
             # self.display_image(self.image2_mix, self.image1_for_mixing)
-
 
     def open_image2_for_mixing(self, event):
         options = QtWidgets.QFileDialog.Options()
@@ -111,17 +132,18 @@ class UIHandler:
     def mix_images(self):
         if self.image1_for_mixing is None or self.image2_for_mixing is None:
             # Show error message or return silently
-            QtWidgets.QMessageBox.warning(self.main_window, "Warning", 
-                                        "Please load both images for mixing by double-clicking on the image areas.")
+            QtWidgets.QMessageBox.warning(self.main_window, "Warning",
+                                          "Please load both images for mixing by double-clicking on the image areas.")
             return
-        
+
         # Get kernel size and sigma from UI or use default values
         # You might want to add sliders for these parameters in your UI
         kernel_size = 15  # Default or from a slider
         sigma = 5.0      # Default or from a slider
-        
+
         # Call the hybrid image function
-        self.hybrid_image(self.image1_for_mixing, self.image2_for_mixing, kernel_size, sigma)
+        self.hybrid_image(self.image1_for_mixing,
+                          self.image2_for_mixing, kernel_size, sigma)
 
     def open_image(self, event):
         options = QtWidgets.QFileDialog.Options()
@@ -151,7 +173,8 @@ class UIHandler:
                     layout = QVBoxLayout()
 
                     label = QLabel()
-                    label.setPixmap(item.pixmap().scaled(600, 600, Qt.KeepAspectRatio))  # Scale it larger
+                    label.setPixmap(item.pixmap().scaled(
+                        600, 600, Qt.KeepAspectRatio))  # Scale it larger
                     label.setAlignment(Qt.AlignCenter)
 
                     layout.addWidget(label)
@@ -160,7 +183,7 @@ class UIHandler:
                     dialog.show()
                     return  # Exit after showing the first found pixmap item
         print('No QGraphicsPixmapItem found in the scene')
-    
+
     def thresholding_control(self):
         if self.main_window.thresholding_combo.currentText() == 'Global':
             self.main_window.Global_widget.show()
@@ -168,7 +191,7 @@ class UIHandler:
         else:
             self.main_window.Local_widget.show()
             self.main_window.Global_widget.hide()
-    
+
     def update_kernel_size(self, event):
         self.kernel_size = self.main_window.kernel_size_slider.value()
         self.main_window.kernel_size_label.setText(f"{self.kernel_size}")
@@ -183,9 +206,11 @@ class UIHandler:
         if noise_type == 'guassian noise':
             noisy_image = add_gaussian_noise(self.image, sigma=noise_intensity)
         elif noise_type == 'salt and pepper noise':
-            noisy_image = add_salt_pepper_noise(self.image , salt_prob=noise_intensity/100, pepper_prob=noise_intensity/100)
+            noisy_image = add_salt_pepper_noise(
+                self.image, salt_prob=noise_intensity/100, pepper_prob=noise_intensity/100)
         elif noise_type == 'uniform noise':
-            noisy_image = add_uniform_noise(self.image , intensity=noise_intensity)
+            noisy_image = add_uniform_noise(
+                self.image, intensity=noise_intensity)
         else:
             return
 
@@ -214,8 +239,6 @@ class UIHandler:
         view.fitInView(
             scene.itemsBoundingRect(), Qt.KeepAspectRatio)
 
-        
-
     def plot_histogram(self, data):
         fig, ax = plt.subplots(figsize=(5, 4), dpi=150)
         ax.plot(data, color='blue')  # Black color for grayscale consistency
@@ -224,9 +247,10 @@ class UIHandler:
         ax.set_ylabel('Frequency')
         fig.canvas.draw()
         width, height = fig.canvas.get_width_height()
-        img = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8).reshape(height, width, 3)
+        img = np.frombuffer(fig.canvas.tostring_rgb(),
+                            dtype=np.uint8).reshape(height, width, 3)
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # Convert to grayscale
-        
+
         plt.close(fig)  # Close the figure to prevent memory leaks
         return img
 
@@ -235,16 +259,19 @@ class UIHandler:
         if len(cv_img.shape) == 2:  # Grayscale
             height, width = cv_img.shape
             bytes_per_line = width
-            q_img = QImage(cv_img.data, width, height, bytes_per_line, QImage.Format_Grayscale8)
+            q_img = QImage(cv_img.data, width, height,
+                           bytes_per_line, QImage.Format_Grayscale8)
         else:  # RGB
             height, width, channel = cv_img.shape
             bytes_per_line = 3 * width
-            q_img = QImage(cv_img.data, width, height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
-        
+            q_img = QImage(cv_img.data, width, height,
+                           bytes_per_line, QImage.Format_RGB888).rgbSwapped()
+
         return QPixmap.fromImage(q_img)
 
     def equalize_image(self):
-        histogram, equalized_hist, new_image = HistogramEqualization.equalize(self.gray_image)
+        histogram, equalized_hist, new_image = HistogramEqualization.equalize(
+            self.gray_image)
         # Plot histograms as images
         hist_pixmap = self.plot_histogram(histogram)
         equalized_hist_pixmap = self.plot_histogram(equalized_hist)
@@ -257,24 +284,27 @@ class UIHandler:
     def convert_to_grayscale(self, image):
         if len(image.shape) == 3:
             gray_image = RGB2GRAY.convert_to_grayscale(image)
-        
+
         return gray_image
+
     def apply_grayscale(self):
         if self.image is None:
             return
 
         gray_image = self.convert_to_grayscale(self.image)
         self.display_image(self.output_image_view, gray_image)
-    
+
     def apply_thresholding(self, image, threshold_value=128, window_size=15, sensitivity=2, type='global'):
         gray_image = self.convert_to_grayscale(image)
 
         if type == 'global':
-            image = Thresholding.global_thresholding(gray_image, threshold_value)
+            image = Thresholding.global_thresholding(
+                gray_image, threshold_value)
 
         elif type == 'local':
-            image = Thresholding.local_thresholding(gray_image, window_size, sensitivity)
-        
+            image = Thresholding.local_thresholding(
+                gray_image, window_size, sensitivity)
+
         else:
             return
 
@@ -329,24 +359,28 @@ class UIHandler:
         image2 = np.float32(image2)
 
         # Extract frequency components
-        low_frequencies = Hybrid.extract_low_frequencies(image1, kernel_size=kernel_size, sigma=sigma)
+        low_frequencies = Hybrid.extract_low_frequencies(
+            image1, kernel_size=kernel_size, sigma=sigma)
         high_frequencies = Hybrid.extract_high_frequencies(image2)
 
         # Combine frequencies
-        hybrid_image = Hybrid.combine_frequencies(low_frequencies, high_frequencies)
+        hybrid_image = Hybrid.combine_frequencies(
+            low_frequencies, high_frequencies)
 
         hybrid_image = np.array(hybrid_image, dtype=np.uint8)
 
         # display hybrid image
         pixmap = QPixmap(hybrid_image)
-        self.output_img_mix.setPixmap(pixmap.scaled(self.image_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.output_img_mix.setPixmap(pixmap.scaled(
+            self.image_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def rgb_hist(self, image):
-        
+
         # Get image dimensions
         height, width, channels = image.shape
-        R_values, G_values, B_values = RGB_Hist.extract_rgb_channels(image, width, height)
-        
+        R_values, G_values, B_values = RGB_Hist.extract_rgb_channels(
+            image, width, height)
+
         # Compute histograms
         R_histogram = RGB_Hist.compute_histogram(R_values)
         G_histogram = RGB_Hist.compute_histogram(G_values)
@@ -357,13 +391,15 @@ class UIHandler:
         G_cdf = RGB_Hist.compute_cdf(G_histogram)
         B_cdf = RGB_Hist.compute_cdf(B_histogram)
 
-        
         # Plot histograms and CDFs
-        self.display_image(self.main_window.histogram_1,RGB_Hist.plot_histogram(R_histogram, 'Red'))
-        self.display_image(self.main_window.histogram_2,RGB_Hist.plot_histogram(G_histogram, 'Green'))
-        self.display_image(self.main_window.histogram_3,RGB_Hist.plot_histogram(B_histogram, 'Blue'))
-        self.display_image(self.main_window.histogram_4,RGB_Hist.plot_combined_cdf(R_cdf, G_cdf, B_cdf))
-
+        self.display_image(self.main_window.histogram_1,
+                           RGB_Hist.plot_histogram(R_histogram, 'Red'))
+        self.display_image(self.main_window.histogram_2,
+                           RGB_Hist.plot_histogram(G_histogram, 'Green'))
+        self.display_image(self.main_window.histogram_3,
+                           RGB_Hist.plot_histogram(B_histogram, 'Blue'))
+        self.display_image(self.main_window.histogram_4,
+                           RGB_Hist.plot_combined_cdf(R_cdf, G_cdf, B_cdf))
 
         # RGB_Hist.plot_histogram(G_histogram, 'Green')
         # RGB_Hist.plot_histogram(B_histogram, 'Blue')
@@ -376,11 +412,11 @@ class UIHandler:
 
         return R_cdf, G_cdf, B_cdf
 
-
     def historgram_equalization(self, image, R_cdf, G_cdf, B_cdf):
         # Get image dimensions
         height, width, channels = image.shape
-        R_values, G_values, B_values = RGB_Hist.extract_rgb_channels(image, width, height)
+        R_values, G_values, B_values = RGB_Hist.extract_rgb_channels(
+            image, width, height)
 
         # Equalize each channel
         R_equalized = RGB_Hist.histogram_equalization(R_values, R_cdf)
