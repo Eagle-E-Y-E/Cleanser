@@ -71,7 +71,7 @@ class Hybrid:
         return convolved_image
 
     @staticmethod
-    def extract_low_frequencies(image):
+    def extract_low_frequencies(image, kernel_size = 15, sigma = 5):
         """
         Extract low frequencies using Gaussian blur.
 
@@ -81,8 +81,6 @@ class Hybrid:
         Returns:
         - low_frequencies: numpy array of the low-frequency components.
         """
-        kernel_size = 15  # Adjust based on desired blurriness
-        sigma = 5
         gaussian_kernel = Hybrid.generate_gaussian_kernel(kernel_size, sigma)
         low_frequencies = Hybrid.convolve_image(image, gaussian_kernel)
         return low_frequencies

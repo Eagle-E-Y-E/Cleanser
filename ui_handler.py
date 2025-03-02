@@ -165,7 +165,7 @@ class UIHandler:
         
         return gray_image
     
-    def apply_thresholding(self, image, threshold_value, window_size, sensitivity, type):
+    def apply_thresholding(self, image, threshold_value=128, window_size=15, sensitivity=2, type='global'):
         gray_image = self.convert_to_grayscale(image)
 
         if type == 'global':
@@ -178,9 +178,12 @@ class UIHandler:
             return
 
         # diplay the thresholded image
+        self.display_image(self.output_image_view, image)
 
     def apply_frequency_filters(self, image, filter_type, D0):
-        image = cv2.resize(image, (256, 256))
+        gray_image = self.convert_to_grayscale(image)
+
+        image = cv2.resize(gray_image, (256, 256))
 
         # Convert image to float32 for FFT processing
         image = np.float32(image)
@@ -214,8 +217,9 @@ class UIHandler:
         image = np.array(normalized_image, dtype=np.uint8)
 
         # display the image
+        self.display_image(self.output_image_view, image)
 
-    def hybrid_image(self, image1, image2):
+    def hybrid_image(self, image1, image2, kernel_size, sigma):
         # Resize images to the same dimensions
         image1 = cv2.resize(image1, (256, 256))
         image2 = cv2.resize(image2, (256, 256))
@@ -224,7 +228,7 @@ class UIHandler:
         image2 = np.float32(image2)
 
         # Extract frequency components
-        low_frequencies = Hybrid.extract_low_frequencies(image1)
+        low_frequencies = Hybrid.extract_low_frequencies(image1, kernel_size=kernel_size, sigma=sigma)
         high_frequencies = Hybrid.extract_high_frequencies(image2)
 
         # Combine frequencies
@@ -233,3 +237,55 @@ class UIHandler:
         hybrid_image = np.array(hybrid_image, dtype=np.uint8)
 
         # display hybrid image
+        self.display_image(self.output_img_mix, hybrid_image)
+
+    def rgb_hist(self, image):
+        
+        # Get image dimensions
+        height, width, channels = image.shape
+        R_values, G_values, B_values = RGB_Hist.extract_rgb_channels(image, width, height)
+        
+        # Compute histograms
+        R_histogram = RGB_Hist.compute_histogram(R_values)
+        G_histogram = RGB_Hist.compute_histogram(G_values)
+        B_histogram = RGB_Hist.compute_histogram(B_values)
+
+        # Compute CDFs
+        R_cdf = RGB_Hist.compute_cdf(R_histogram)
+        G_cdf = RGB_Hist.compute_cdf(G_histogram)
+        B_cdf = RGB_Hist.compute_cdf(B_histogram)
+
+        # Plot histograms and CDFs
+        RGB_Hist.plot_histogram(R_histogram, 'Red')
+        RGB_Hist.plot_histogram(G_histogram, 'Green')
+        RGB_Hist.plot_histogram(B_histogram, 'Blue')
+
+        # Plot combined CDFs
+        RGB_Hist.plot_combined_cdf(R_cdf, G_cdf, B_cdf)
+
+        # display the image
+        self.display_image(self.output_image_view, image)
+
+        return R_cdf, G_cdf, B_cdf
+
+
+    def historgram_equalization(self, image, R_cdf, G_cdf, B_cdf):
+        # Get image dimensions
+        height, width, channels = image.shape
+        R_values, G_values, B_values = RGB_Hist.extract_rgb_channels(image, width, height)
+
+        # Equalize each channel
+        R_equalized = RGB_Hist.histogram_equalization(R_values, R_cdf)
+        G_equalized = RGB_Hist.histogram_equalization(G_values, G_cdf)
+        B_equalized = RGB_Hist.histogram_equalization(B_values, B_cdf)
+
+        # Reconstruct the equalized image
+        equalized_image = cv2.merge([
+            np.array(B_equalized, dtype=np.uint8).reshape(height, width),
+            np.array(G_equalized, dtype=np.uint8).reshape(height, width),
+            np.array(R_equalized, dtype=np.uint8).reshape(height, width)
+        ])
+
+        RGB_Hist(equalized_image)
+
+        return equalized_image
