@@ -59,7 +59,9 @@ class UIHandler:
         
         self.main_window.histogram_1.mouseDoubleClickEvent = self.show_large_image
         self.large_image_dialog = None
-
+        self.main_window.thresholding_combo.currentIndexChanged.connect(self.thresholding_control)
+        self.main_window.Local_widget.hide()
+        self.main_window.convert_to_grayscale_btn.clicked.connect(self.apply_grayscale)
 
 
         self.main_window.mix_btn.clicked.connect(self.mix_images)
@@ -158,6 +160,15 @@ class UIHandler:
                     dialog.show()
                     return  # Exit after showing the first found pixmap item
         print('No QGraphicsPixmapItem found in the scene')
+    
+    def thresholding_control(self):
+        if self.main_window.thresholding_combo.currentText() == 'Global':
+            self.main_window.Global_widget.show()
+            self.main_window.Local_widget.hide()
+        else:
+            self.main_window.Local_widget.show()
+            self.main_window.Global_widget.hide()
+    
     def update_kernel_size(self, event):
         self.kernel_size = self.main_window.kernel_size_slider.value()
         self.main_window.kernel_size_label.setText(f"{self.kernel_size}")
@@ -248,6 +259,12 @@ class UIHandler:
             gray_image = RGB2GRAY.convert_to_grayscale(image)
         
         return gray_image
+    def apply_grayscale(self):
+        if self.image is None:
+            return
+
+        gray_image = self.convert_to_grayscale(self.image)
+        self.display_image(self.output_image_view, gray_image)
     
     def apply_thresholding(self, image, threshold_value=128, window_size=15, sensitivity=2, type='global'):
         gray_image = self.convert_to_grayscale(image)

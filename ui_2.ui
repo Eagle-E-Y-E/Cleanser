@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1087</width>
-    <height>848</height>
+    <width>1101</width>
+    <height>1017</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -409,38 +409,50 @@ border-radius: 5px;
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <widget class="QLabel" name="label_2">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>35</height>
-                 </size>
+               <widget class="QFrame" name="frame_14">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
                 </property>
-                <property name="text">
-                 <string>select noise type:</string>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
                 </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="noise_type_combo">
-                <property name="currentText">
-                 <string>guassian noise</string>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>guassian noise</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>salt and pepper noise</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>uniform noise</string>
-                 </property>
-                </item>
+                <layout class="QHBoxLayout" name="horizontalLayout_3">
+                 <item>
+                  <widget class="QLabel" name="label_2">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>select noise type:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="noise_type_combo">
+                   <property name="currentText">
+                    <string>guassian noise</string>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>guassian noise</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>salt and pepper noise</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>uniform noise</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
@@ -976,13 +988,7 @@ border-color: rgb(0, 0, 127);</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
-               <widget class="QFrame" name="frame">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>35</height>
-                 </size>
-                </property>
+               <widget class="QFrame" name="frame_15">
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -1003,26 +1009,26 @@ border-color: rgb(0, 0, 127);</string>
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <widget class="QComboBox" name="filter_combo">
+                   <item>
+                    <property name="text">
+                     <string>average filter</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>gausssian filter</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>median filter</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
                 </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="filter_combo">
-                <item>
-                 <property name="text">
-                  <string>average filter</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>gausssian filter</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>median filter</string>
-                 </property>
-                </item>
                </widget>
               </item>
               <item>
@@ -1171,6 +1177,173 @@ border-color: rgb(0, 0, 127);</string>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_13">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_12">
+                 <item>
+                  <widget class="QFrame" name="frame">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_11">
+                    <item>
+                     <widget class="QLabel" name="label_8">
+                      <property name="text">
+                       <string>select Thresholding:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QComboBox" name="thresholding_combo">
+                      <item>
+                       <property name="text">
+                        <string>Global</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Local</string>
+                       </property>
+                      </item>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="Local_widget" native="true">
+                   <layout class="QVBoxLayout" name="verticalLayout_14">
+                    <item>
+                     <widget class="QLabel" name="label_11">
+                      <property name="text">
+                       <string>window size:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_17">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_13">
+                       <item>
+                        <widget class="QSlider" name="window_size_slider">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="window_size_label">
+                         <property name="text">
+                          <string>0</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="label_13">
+                      <property name="text">
+                       <string>sensitivity:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_18">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_14">
+                       <item>
+                        <widget class="QSlider" name="sensitivity_slider">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="sensitivity_label">
+                         <property name="text">
+                          <string>0</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="Global_widget" native="true">
+                   <layout class="QVBoxLayout" name="verticalLayout_13">
+                    <item>
+                     <widget class="QLabel" name="label_9">
+                      <property name="text">
+                       <string>threshold:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_16">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_12">
+                       <item>
+                        <widget class="QSlider" name="threshold_slider">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="threshold_label">
+                         <property name="text">
+                          <string>0</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="apply_thresholding_btn">
+                   <property name="styleSheet">
+                    <string notr="true">background-color: rgb(31, 87, 231);
+border-color: rgb(0, 0, 127);</string>
+                   </property>
+                   <property name="text">
+                    <string>apply thresholding</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
@@ -1601,7 +1774,7 @@ border-color: rgb(0, 0, 127);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1087</width>
+     <width>1101</width>
      <height>17</height>
     </rect>
    </property>
