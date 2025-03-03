@@ -167,7 +167,7 @@ class UIHandler:
 
             self.image = cv2.imread(file_name, cv2.IMREAD_COLOR)
             self.gray_image = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
-            # self.rgb_hist(self.image)
+            self.rgb_hist(self.image)
 
     def show_large_image(self, event):
         # Get the scene from the QGraphicsView
