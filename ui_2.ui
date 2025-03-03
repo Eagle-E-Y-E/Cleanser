@@ -1242,6 +1242,9 @@ border-color: rgb(0, 0, 127);</string>
                       <layout class="QHBoxLayout" name="horizontalLayout_13">
                        <item>
                         <widget class="QSlider" name="window_size_slider">
+                         <property name="maximum">
+                          <number>255</number>
+                         </property>
                          <property name="orientation">
                           <enum>Qt::Horizontal</enum>
                          </property>
@@ -1314,6 +1317,9 @@ border-color: rgb(0, 0, 127);</string>
                       <layout class="QHBoxLayout" name="horizontalLayout_12">
                        <item>
                         <widget class="QSlider" name="threshold_slider">
+                         <property name="maximum">
+                          <number>256</number>
+                         </property>
                          <property name="orientation">
                           <enum>Qt::Horizontal</enum>
                          </property>
@@ -1784,12 +1790,18 @@ QGroupBox::title {
                     <item>
                      <widget class="QLabel" name="label_14">
                       <property name="text">
-                       <string>sensitivity</string>
+                       <string>sigma:</string>
                       </property>
                      </widget>
                     </item>
                     <item>
-                     <widget class="QSlider" name="mixing_sensitivity_slider">
+                     <widget class="QSlider" name="mixing_sigma_slider">
+                      <property name="minimum">
+                       <number>1</number>
+                      </property>
+                      <property name="maximum">
+                       <number>5</number>
+                      </property>
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
                       </property>
