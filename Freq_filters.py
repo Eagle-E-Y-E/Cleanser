@@ -3,6 +3,7 @@ import cmath
 import cv2
 import numpy as np
 
+
 class Freq_filters:
     @staticmethod
     def DFT_2D(image):
@@ -16,14 +17,14 @@ class Freq_filters:
         u = np.arange(M)
         v = np.arange(N)
         U, V = np.meshgrid(u, v, indexing='ij')
-        D = np.sqrt((U - M//2)**2 + (V - N//2)**2)
-        
+        D = np.sqrt((U - M // 2) ** 2 + (V - N // 2) ** 2)
+
         if filter_type == 'low':
             H = np.where(D <= D0, 1, 0)
         elif filter_type == 'high':
             H = np.where(D > D0, 1, 0)
         return H
-    
+
     @staticmethod
     def apply_filter(F, H):
         # Element-wise multiplication
@@ -35,7 +36,7 @@ class Freq_filters:
         # Apply 2D inverse FFT using NumPy
         image = np.fft.ifft2(F)
         return image.real  # Return the real part
-    
+
     @staticmethod
     def normalize_image(image):
         M = len(image)
@@ -47,7 +48,7 @@ class Freq_filters:
             for x in range(N):
                 normalized[y][x] = ((image[y][x] - min_val) / (max_val - min_val)) * 255
         return normalized
-    
+
     # @staticmethod
     # def normalize_image(image):
     #     # Normalize the image to the range 0-255

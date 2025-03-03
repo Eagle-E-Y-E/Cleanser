@@ -5,9 +5,11 @@ from PyQt5.QtWidgets import QFileDialog, QGraphicsScene, QGraphicsPixmapItem
 import cv2
 import numpy as np
 from add_noise import add_gaussian_noise, add_salt_pepper_noise, add_uniform_noise
+from EdgeDetection import EdgeDetection
 from apply_filter import apply_average_filter, apply_gaussian_filter, apply_median_filter
 from Histogram_Equalization import HistogramEqualization
 import matplotlib.pyplot as plt
+
 
 # ui_names:
 # - image1
@@ -33,6 +35,7 @@ import matplotlib.pyplot as plt
 class UIHandler:
     def __init__(self, main_window):
         self.main_window = main_window
+        self.edge_detector = EdgeDetection()
         uic.loadUi(r'ui_2.ui', self.main_window)
         self.image_label = self.main_window.findChild(
             QtWidgets.QLabel, 'image1')
@@ -48,12 +51,15 @@ class UIHandler:
         self.main_window.kernel_size_slider.valueChanged.connect(
             self.update_kernel_size)
         self.main_window.kernel_size_slider.setValue(3)
-        self.main_window.noise_intensity_slider.valueChanged.connect(lambda: self.main_window.noise_intensity_label.setText(
-            f"{self.main_window.noise_intensity_slider.value()}"))
+        self.main_window.noise_intensity_slider.valueChanged.connect(
+            lambda: self.main_window.noise_intensity_label.setText(
+                f"{self.main_window.noise_intensity_slider.value()}"))
         self.image = None
         self.gray_image = None
         self.main_window.equalize_image_btn.clicked.connect(self.equalize_image)
         self.kernel_size = 3
+
+        self.main_window.detect_edges_btn.clicked.connect(self.detect_edges)
 
     def open_image(self, event):
         options = QtWidgets.QFileDialog.Options()
@@ -83,9 +89,10 @@ class UIHandler:
         if noise_type == 'guassian noise':
             noisy_image = add_gaussian_noise(self.image, sigma=noise_intensity)
         elif noise_type == 'salt and pepper noise':
-            noisy_image = add_salt_pepper_noise(self.image , salt_prob=noise_intensity/100, pepper_prob=noise_intensity/100)
+            noisy_image = add_salt_pepper_noise(self.image, salt_prob=noise_intensity / 100,
+                                                pepper_prob=noise_intensity / 100)
         elif noise_type == 'uniform noise':
-            noisy_image = add_uniform_noise(self.image , intensity=noise_intensity)
+            noisy_image = add_uniform_noise(self.image, intensity=noise_intensity)
         else:
             return
 
@@ -114,8 +121,6 @@ class UIHandler:
         view.fitInView(
             scene.itemsBoundingRect(), Qt.KeepAspectRatio)
 
-        
-
     def plot_histogram(self, data):
         fig, ax = plt.subplots(figsize=(5, 4), dpi=150)
         ax.plot(data, color='blue')  # Black color for grayscale consistency
@@ -126,7 +131,7 @@ class UIHandler:
         width, height = fig.canvas.get_width_height()
         img = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8).reshape(height, width, 3)
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)  # Convert to grayscale
-        
+
         plt.close(fig)  # Close the figure to prevent memory leaks
         return img
 
@@ -140,7 +145,7 @@ class UIHandler:
             height, width, channel = cv_img.shape
             bytes_per_line = 3 * width
             q_img = QImage(cv_img.data, width, height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
-        
+
         return QPixmap.fromImage(q_img)
 
     def equalize_image(self):
@@ -153,3 +158,31 @@ class UIHandler:
         self.display_image(self.original_histogram, hist_pixmap)
         self.display_image(self.equalized_histogram, equalized_hist_pixmap)
         self.display_image(self.output_image_view, new_image)
+
+    def detect_edges(self):
+        self.edge_detector.mask_selection = self.main_window.edge_detection_method_combo.currentText()
+        self.edge_detector.image = self.gray_image
+        gradient_magnitude = [[]]
+
+        if self.edge_detector.mask_selection == "Sobel":
+            Gx, Gy = self.edge_detector.sobel_kernel()
+            gradient_magnitude = np.sqrt(Gx ** 2 + Gy ** 2)
+
+        elif self.edge_detector.mask_selection == "Prewitt":
+            Gx, Gy = self.edge_detector.prewitt_kernel()
+            gradient_magnitude = np.sqrt(Gx ** 2 + Gy ** 2)
+
+        elif self.edge_detector.mask_selection == "Roberts":
+            Gx, Gy = self.edge_detector.roberts_kernel()
+            gradient_magnitude = np.sqrt(Gx ** 2 + Gy ** 2)
+
+        elif self.edge_detector.mask_selection == "Canny":
+            gradient_magnitude = self.edge_detector.canny_kernel(self.edge_detector.image)
+
+        # threshold = 200
+        gradient_magnitude = (gradient_magnitude / gradient_magnitude.max()) * 255
+        gradient_magnitude = gradient_magnitude.astype(np.uint8)
+        self.display_image(self.output_image_view, gradient_magnitude)
+
+        # cv2.imwrite(save_path, gradient_magnitude)
+        # print(f"Edge-detected image saved as: {save_path}")
