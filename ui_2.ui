@@ -1467,7 +1467,7 @@ border-color: rgb(0, 0, 127);</string>
            <string/>
           </property>
           <layout class="QGridLayout" name="gridLayout_22">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <layout class="QVBoxLayout" name="verticalLayout">
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -1602,16 +1602,42 @@ QGroupBox::title {
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
-             <widget class="QLabel" name="label_4">
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>25</height>
-               </size>
+             <widget class="QFrame" name="frame_24">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
               </property>
-              <property name="text">
-               <string>Histogram</string>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
               </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_18">
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Histogram</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="input_radio">
+                 <property name="text">
+                  <string>input</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="output_radio">
+                 <property name="text">
+                  <string>output</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -1746,12 +1772,15 @@ QGroupBox::title {
                </widget>
               </item>
               <item>
-               <widget class="QGraphicsView" name="output_img_mix">
+               <widget class="QLabel" name="output_img_mix">
                 <property name="maximumSize">
                  <size>
                   <width>250</width>
                   <height>300</height>
                  </size>
+                </property>
+                <property name="text">
+                 <string>output</string>
                 </property>
                </widget>
               </item>

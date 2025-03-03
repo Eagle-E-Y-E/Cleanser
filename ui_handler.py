@@ -103,13 +103,16 @@ class UIHandler:
         self.image2_mix.mouseDoubleClickEvent = self.open_image2_for_mixing
 
         self.image = None
+        self.outpput_image = None
         self.gray_image = None
         self.main_window.equalize_image_btn.clicked.connect(
             self.equalize_image)
         self.kernel_size = 3
-        self.window_size = self.main_window.window_size_slider.value()
-        self.sensitivity = self.main_window.sensitivity_slider.value()
-        self.threshold = self.main_window.threshold_slider.value()
+        
+        self.main_window.input_radio.clicked.connect(self.rgb_hist)
+        self.main_window.output_radio.clicked.connect(self.rgb_hist)
+
+
 
     def open_image1_for_mixing(self, event):
         options = QtWidgets.QFileDialog.Options()
@@ -167,8 +170,8 @@ class UIHandler:
 
             self.image = cv2.imread(file_name, cv2.IMREAD_COLOR)
             self.gray_image = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
+            # if self.main_window.input_radio.isChecked():
             self.rgb_hist(self.image)
-
     def show_large_image(self, event):
         # Get the scene from the QGraphicsView
         scene = self.main_window.histogram_1.scene()
@@ -238,6 +241,7 @@ class UIHandler:
             return
 
         self.display_image(self.output_image_view, noisy_image)
+        self.outpput_image = noisy_image
 
     def apply_filter(self):
         if self.image is None:
@@ -257,6 +261,7 @@ class UIHandler:
         else:
             return
         self.display_image(self.output_image_view, filtered_image)
+        self.outpput_image = filtered_image
 
     def display_image(self, view, image):
         pixmap = self.convert_cv_to_pixmap(image)
@@ -307,6 +312,7 @@ class UIHandler:
         self.display_image(self.original_histogram, hist_pixmap)
         self.display_image(self.equalized_histogram, equalized_hist_pixmap)
         self.display_image(self.output_image_view, new_image)
+        self.outpput_image = new_image
 
     def convert_to_grayscale(self, image):
         if len(image.shape) == 3:
@@ -320,6 +326,7 @@ class UIHandler:
 
         gray_image = self.convert_to_grayscale(self.image)
         self.display_image(self.output_image_view, gray_image)
+        self.outpput_image = gray_image
 
     def apply_thresholding(self, image, threshold_value=128, window_size=15, sensitivity=2, type='global'):
         gray_image = self.convert_to_grayscale(image)
@@ -337,6 +344,7 @@ class UIHandler:
 
         # diplay the thresholded image
         self.display_image(self.output_image_view, image)
+        self.outpput_image = image
 
     def apply_frequency_filters(self, image, filter_type='high', D0=30):
         gray_image = self.convert_to_grayscale(image)
@@ -437,14 +445,6 @@ class UIHandler:
         self.display_image(self.main_window.histogram_4,
                            RGB_Hist.plot_combined_cdf(R_cdf, G_cdf, B_cdf))
 
-        # RGB_Hist.plot_histogram(G_histogram, 'Green')
-        # RGB_Hist.plot_histogram(B_histogram, 'Blue')
-
-        # # Plot combined CDFs
-        # RGB_Hist.plot_combined_cdf(R_cdf, G_cdf, B_cdf)
-
-        # # display the image
-        # self.display_image(self.output_image_view, image)
 
         return R_cdf, G_cdf, B_cdf
 
