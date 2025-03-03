@@ -34,8 +34,8 @@ class Thresholding:
         - A new image array after applying local thresholding.
         """
         # Ensure window size is odd
-        if window_size % 2 == 0:
-            raise ValueError("window_size must be an odd integer.")
+        # if window_size % 2 == 0:
+        #     raise ValueError("window_size must be an odd integer.")
 
         # Pad the image to handle borders
         pad_size = window_size // 2

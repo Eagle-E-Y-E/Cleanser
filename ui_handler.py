@@ -56,6 +56,8 @@ class UIHandler:
         self.main_window.kernel_size_slider.valueChanged.connect(
             self.update_kernel_size)
         self.main_window.kernel_size_slider.setValue(3)
+        self.main_window.apply_thresholding_btn.clicked.connect(
+            self.thresholding_control)
         ## sliders
         self.main_window.noise_intensity_slider.valueChanged.connect(lambda: self.main_window.noise_intensity_label.setText(
             f"{self.main_window.noise_intensity_slider.value()}"))
@@ -190,9 +192,12 @@ class UIHandler:
         if self.main_window.thresholding_combo.currentText() == 'Global':
             self.main_window.Global_widget.show()
             self.main_window.Local_widget.hide()
+            self.apply_thresholding(self.image, type='global', threshold_value=self.main_window.threshold_slider.value())
+
         else:
             self.main_window.Local_widget.show()
             self.main_window.Global_widget.hide()
+            self.apply_thresholding(self.image, type='local', window_size=self.main_window.window_size_slider.value(), sensitivity=self.main_window.sensitivity_slider.value())
 
     def update_kernel_size(self, event):
         self.kernel_size = self.main_window.kernel_size_slider.value()
