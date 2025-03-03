@@ -1042,14 +1042,8 @@ border-color: rgb(0, 0, 127);</string>
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="frame_4">
-                <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_8">
+               <widget class="QWidget" name="kernel_size_widget" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_17">
                  <item>
                   <widget class="QLabel" name="label_3">
                    <property name="text">
@@ -1083,6 +1077,18 @@ border-color: rgb(0, 0, 127);</string>
                    </layout>
                   </widget>
                  </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="frame_4">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_8">
                  <item>
                   <widget class="QWidget" name="cuttofffreq_widgwt" native="true">
                    <layout class="QVBoxLayout" name="verticalLayout_16">
