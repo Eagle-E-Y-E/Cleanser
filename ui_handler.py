@@ -14,6 +14,7 @@ from RGB_Hist import RGB_Hist
 from Freq_filters import Freq_filters
 from Hybrid import Hybrid
 import matplotlib.pyplot as plt
+from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout
 
 # ui_names:
 # - image1
@@ -58,7 +59,10 @@ class UIHandler:
         self.main_window.kernel_size_slider.setValue(3)
         self.main_window.apply_thresholding_btn.clicked.connect(
             self.thresholding_control)
-        # sliders
+        self.main_window.equalize_image_btn.clicked.connect(
+            self.equalize_image)
+        
+        # connect sliders to labels
         self.main_window.noise_intensity_slider.valueChanged.connect(lambda: self.main_window.noise_intensity_label.setText(
             f"{self.main_window.noise_intensity_slider.value()}"))
         self.main_window.window_size_slider.valueChanged.connect(lambda: self.main_window.window_size_label.setText(
@@ -73,9 +77,15 @@ class UIHandler:
             f"{self.main_window.mixing_sigma_slider.value()}"))
         self.main_window.cuttoff_freq_slider.valueChanged.connect(lambda: self.main_window.cuttofffreq_label.setText(
             f"{self.main_window.cuttoff_freq_slider.value()}"))
+        
 
-        self.main_window.histogram_1.mouseDoubleClickEvent = self.show_large_image
-        self.large_image_dialog = None
+        ## double click histograms to maximize 
+        self.main_window.histogram_1.mouseDoubleClickEvent = lambda event: self.show_large_image(self.main_window.histogram_1, event)
+        self.main_window.histogram_2.mouseDoubleClickEvent = lambda event: self.show_large_image(self.main_window.histogram_2, event)
+        self.main_window.histogram_3.mouseDoubleClickEvent = lambda event: self.show_large_image(self.main_window.histogram_3, event)
+        self.main_window.histogram_4.mouseDoubleClickEvent = lambda event: self.show_large_image(self.main_window.histogram_4, event)
+
+
         self.main_window.thresholding_combo.currentIndexChanged.connect(
             self.thresholding_control)
         self.main_window.Local_widget.hide()
@@ -84,17 +94,16 @@ class UIHandler:
         self.main_window.cuttofffreq_widgwt.hide()
         self.main_window.filter_combo.currentIndexChanged.connect(
             self.freq_control)
+        
 
         self.main_window.mix_btn.clicked.connect(self.mix_images)
-        # Add references to image mix labels if not already initialized
+        # Add references to image mix labels
         self.image1_mix = self.main_window.findChild(
             QtWidgets.QLabel, 'image1_mix')
         self.image2_mix = self.main_window.findChild(
             QtWidgets.QLabel, 'image2_mix')
         self.output_img_mix = self.main_window.findChild(
             QtWidgets.QLabel, 'output_img_mix')
-
-        # Initialize image storage variables
         self.image1_for_mixing = None
         self.image2_for_mixing = None
 
@@ -105,8 +114,6 @@ class UIHandler:
         self.image = None
         self.outpput_image = None
         self.gray_image = None
-        self.main_window.equalize_image_btn.clicked.connect(
-            self.equalize_image)
         self.kernel_size = 3
         
         self.main_window.input_radio.clicked.connect(self.rgb_hist)
@@ -172,28 +179,32 @@ class UIHandler:
             self.gray_image = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
             # if self.main_window.input_radio.isChecked():
             self.rgb_hist(self.image)
-    def show_large_image(self, event):
-        # Get the scene from the QGraphicsView
-        scene = self.main_window.histogram_1.scene()
+    def show_large_image(self , histogram, event):
+        scene = histogram.scene()  # Get the scene of the clicked histogram
         if scene is not None:
             # Iterate through the items in the scene to find the QGraphicsPixmapItem
             for item in scene.items():
-                if isinstance(item, QGraphicsPixmapItem):
+                if isinstance(item, QGraphicsPixmapItem):  # Ensure it's an image
                     print('Showing large image')
-                    dialog = QWidget()
+                    
+                    # Create a dialog
+                    dialog = QDialog(self.main_window)
                     dialog.setWindowTitle("Large Image")
                     layout = QVBoxLayout()
 
+                    # Create and set the QLabel with the scaled image
                     label = QLabel()
-                    label.setPixmap(item.pixmap().scaled(
-                        600, 600, Qt.KeepAspectRatio))  # Scale it larger
+                    label.setPixmap(item.pixmap().scaled(600, 600, Qt.KeepAspectRatio))
                     label.setAlignment(Qt.AlignCenter)
 
                     layout.addWidget(label)
                     dialog.setLayout(layout)
                     dialog.resize(650, 650)
-                    dialog.show()
+
+                    # Show the dialog modally
+                    dialog.exec_()  
                     return  # Exit after showing the first found pixmap item
+
         print('No QGraphicsPixmapItem found in the scene')
 
     def thresholding_control(self):
