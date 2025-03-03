@@ -250,6 +250,10 @@ class UIHandler:
                 self.image, self.kernel_size)
         elif filter_type == 'median filter':
             filtered_image = apply_median_filter(self.image, self.kernel_size)
+        elif filter_type == 'high pass filter':
+            filtered_image = self.apply_frequency_filters(self.image, filter_type='high', D0=self.main_window.cuttoff_freq_slider.value())
+        elif filter_type == 'low pass filter':
+            filtered_image = self.apply_frequency_filters(self.image, filter_type='low', D0=self.main_window.cuttoff_freq_slider.value())
         else:
             return
         self.display_image(self.output_image_view, filtered_image)
@@ -334,7 +338,7 @@ class UIHandler:
         # diplay the thresholded image
         self.display_image(self.output_image_view, image)
 
-    def apply_frequency_filters(self, image, filter_type, D0):
+    def apply_frequency_filters(self, image, filter_type='high', D0=30):
         gray_image = self.convert_to_grayscale(image)
 
         image = cv2.resize(gray_image, (256, 256))
@@ -369,9 +373,10 @@ class UIHandler:
 
         # Convert the normalized image to uint8
         image = np.array(normalized_image, dtype=np.uint8)
-
+        return image
+    
         # display the image
-        self.display_image(self.output_image_view, image)
+        # self.display_image(self.output_image_view, image)
 
     def hybrid_image(self, image1, image2, kernel_size, sigma):
         # Resize images to the same dimensions
