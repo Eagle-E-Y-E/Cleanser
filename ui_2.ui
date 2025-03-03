@@ -371,7 +371,7 @@ QScrollBar::right-arrow:horizontal {
        <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1801,6 +1801,9 @@ QGroupBox::title {
                       </property>
                       <property name="maximum">
                        <number>5</number>
+                      </property>
+                      <property name="sliderPosition">
+                       <number>1</number>
                       </property>
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>

@@ -58,7 +58,7 @@ class UIHandler:
         self.main_window.kernel_size_slider.setValue(3)
         self.main_window.apply_thresholding_btn.clicked.connect(
             self.thresholding_control)
-        ## sliders
+        # sliders
         self.main_window.noise_intensity_slider.valueChanged.connect(lambda: self.main_window.noise_intensity_label.setText(
             f"{self.main_window.noise_intensity_slider.value()}"))
         self.main_window.window_size_slider.valueChanged.connect(lambda: self.main_window.window_size_label.setText(
@@ -106,7 +106,6 @@ class UIHandler:
         self.sensitivity = self.main_window.sensitivity_slider.value()
         self.threshold = self.main_window.threshold_slider.value()
 
-
     def open_image1_for_mixing(self, event):
         options = QtWidgets.QFileDialog.Options()
         file_name, _ = QtWidgets.QFileDialog.getOpenFileName(
@@ -140,7 +139,8 @@ class UIHandler:
 
         # Get kernel size and sigma from UI or use default values
         # You might want to add sliders for these parameters in your UI
-        kernel_size = self.main_window.mixing_kenel_size_slider.value()  # Default or from a slider
+        # Default or from a slider
+        kernel_size = self.main_window.mixing_kenel_size_slider.value()
         print(kernel_size)
         sigma = self.main_window.mixing_sigma_slider.value()     # Default or from a slider
         print(sigma)
@@ -192,12 +192,14 @@ class UIHandler:
         if self.main_window.thresholding_combo.currentText() == 'Global':
             self.main_window.Global_widget.show()
             self.main_window.Local_widget.hide()
-            self.apply_thresholding(self.image, type='global', threshold_value=self.main_window.threshold_slider.value())
+            self.apply_thresholding(
+                self.image, type='global', threshold_value=self.main_window.threshold_slider.value())
 
         else:
             self.main_window.Local_widget.show()
             self.main_window.Global_widget.hide()
-            self.apply_thresholding(self.image, type='local', window_size=self.main_window.window_size_slider.value(), sensitivity=self.main_window.sensitivity_slider.value())
+            self.apply_thresholding(self.image, type='local', window_size=self.main_window.window_size_slider.value(
+            ), sensitivity=self.main_window.sensitivity_slider.value())
 
     def update_kernel_size(self, event):
         self.kernel_size = self.main_window.kernel_size_slider.value()
@@ -375,12 +377,12 @@ class UIHandler:
             low_frequencies, high_frequencies)
 
         hybrid_image = np.array(hybrid_image, dtype=np.uint8)
-        
 
         # Convert numpy array to QImage
         height, width, channel = hybrid_image.shape
         bytes_per_line = 3 * width
-        q_image = QImage(hybrid_image.data, width, height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
+        q_image = QImage(hybrid_image.data, width, height,
+                         bytes_per_line, QImage.Format_RGB888).rgbSwapped()
 
         # Convert QImage to QPixmap
         pixmap = QPixmap.fromImage(q_image)
