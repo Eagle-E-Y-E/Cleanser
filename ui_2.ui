@@ -1026,6 +1026,16 @@ border-color: rgb(0, 0, 127);</string>
                      <string>median filter</string>
                     </property>
                    </item>
+                   <item>
+                    <property name="text">
+                     <string>high pass filter</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>low pass filter</string>
+                    </property>
+                   </item>
                   </widget>
                  </item>
                 </layout>
@@ -1068,6 +1078,54 @@ border-color: rgb(0, 0, 127);</string>
                       <property name="text">
                        <string>0</string>
                       </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="cuttofffreq_widgwt" native="true">
+                   <layout class="QVBoxLayout" name="verticalLayout_16">
+                    <item>
+                     <widget class="QLabel" name="label_12">
+                      <property name="text">
+                       <string>cutoff-freq:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_10">
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_9">
+                       <item>
+                        <widget class="QSlider" name="cuttoff_freq_slider">
+                         <property name="minimum">
+                          <number>10</number>
+                         </property>
+                         <property name="maximum">
+                          <number>180</number>
+                         </property>
+                         <property name="singleStep">
+                          <number>10</number>
+                         </property>
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="cuttofffreq_label">
+                         <property name="text">
+                          <string>0</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </widget>
                     </item>
                    </layout>

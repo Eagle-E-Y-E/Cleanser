@@ -71,6 +71,8 @@ class UIHandler:
             f"{self.main_window.mixing_kenel_size_slider.value()}"))
         self.main_window.mixing_sigma_slider.valueChanged.connect(lambda: self.main_window.mixing_sensitivity_label.setText(
             f"{self.main_window.mixing_sigma_slider.value()}"))
+        self.main_window.cuttoff_freq_slider.valueChanged.connect(lambda: self.main_window.cuttofffreq_label.setText(
+            f"{self.main_window.cuttoff_freq_slider.value()}"))
 
         self.main_window.histogram_1.mouseDoubleClickEvent = self.show_large_image
         self.large_image_dialog = None
@@ -79,6 +81,9 @@ class UIHandler:
         self.main_window.Local_widget.hide()
         self.main_window.convert_to_grayscale_btn.clicked.connect(
             self.apply_grayscale)
+        self.main_window.cuttofffreq_widgwt.hide()
+        self.main_window.filter_combo.currentIndexChanged.connect(
+            self.freq_control)
 
         self.main_window.mix_btn.clicked.connect(self.mix_images)
         # Add references to image mix labels if not already initialized
@@ -200,6 +205,13 @@ class UIHandler:
             self.main_window.Global_widget.hide()
             self.apply_thresholding(self.image, type='local', window_size=self.main_window.window_size_slider.value(
             ), sensitivity=self.main_window.sensitivity_slider.value())
+
+    def freq_control(self):
+        if self.main_window.filter_combo.currentText() == 'high pass filter' or self.main_window.filter_combo.currentText() == 'low pass filter':
+            self.main_window.cuttofffreq_widgwt.show()
+
+        else:
+            self.main_window.cuttofffreq_widgwt.hide()
 
     def update_kernel_size(self, event):
         self.kernel_size = self.main_window.kernel_size_slider.value()
