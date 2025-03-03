@@ -209,9 +209,11 @@ class UIHandler:
     def freq_control(self):
         if self.main_window.filter_combo.currentText() == 'high pass filter' or self.main_window.filter_combo.currentText() == 'low pass filter':
             self.main_window.cuttofffreq_widgwt.show()
+            self.main_window.kernel_size_widget.hide()
 
         else:
             self.main_window.cuttofffreq_widgwt.hide()
+            self.main_window.kernel_size_widget.show()
 
     def update_kernel_size(self, event):
         self.kernel_size = self.main_window.kernel_size_slider.value()
@@ -243,7 +245,7 @@ class UIHandler:
         filter_type = self.main_window.filter_combo.currentText()
         if filter_type == 'average filter':
             filtered_image = apply_average_filter(self.image, self.kernel_size)
-        elif filter_type == 'gaussian filter':
+        elif filter_type == 'gausssian filter':
             filtered_image = apply_gaussian_filter(
                 self.image, self.kernel_size)
         elif filter_type == 'median filter':
