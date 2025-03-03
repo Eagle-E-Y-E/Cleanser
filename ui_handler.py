@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QGraphi
 import cv2
 import numpy as np
 from add_noise import add_gaussian_noise, add_salt_pepper_noise, add_uniform_noise
+from EdgeDetection import EdgeDetection
 from apply_filter import apply_average_filter, apply_gaussian_filter, apply_median_filter
 from Histogram_Equalization import HistogramEqualization
 from Thresholding import Thresholding
@@ -40,6 +41,7 @@ from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout
 class UIHandler:
     def __init__(self, main_window):
         self.main_window = main_window
+        self.edge_detector = EdgeDetection()
         uic.loadUi(r'ui_2.ui', self.main_window)
         self.image_label = self.main_window.findChild(
             QtWidgets.QLabel, 'image1')
@@ -61,7 +63,8 @@ class UIHandler:
             self.thresholding_control)
         self.main_window.equalize_image_btn.clicked.connect(
             self.equalize_image)
-        
+        self.main_window.detect_edges_btn.clicked.connect(self.detect_edges)
+
         # connect sliders to labels
         self.main_window.noise_intensity_slider.valueChanged.connect(lambda: self.main_window.noise_intensity_label.setText(
             f"{self.main_window.noise_intensity_slider.value()}"))
@@ -77,9 +80,9 @@ class UIHandler:
             f"{self.main_window.mixing_sigma_slider.value()}"))
         self.main_window.cuttoff_freq_slider.valueChanged.connect(lambda: self.main_window.cuttofffreq_label.setText(
             f"{self.main_window.cuttoff_freq_slider.value()}"))
-        
 
-        ## double click histograms to maximize 
+
+        ## double click histograms to maximize
         self.main_window.histogram_1.mouseDoubleClickEvent = lambda event: self.show_large_image(self.main_window.histogram_1, event)
         self.main_window.histogram_2.mouseDoubleClickEvent = lambda event: self.show_large_image(self.main_window.histogram_2, event)
         self.main_window.histogram_3.mouseDoubleClickEvent = lambda event: self.show_large_image(self.main_window.histogram_3, event)
@@ -94,7 +97,7 @@ class UIHandler:
         self.main_window.cuttofffreq_widgwt.hide()
         self.main_window.filter_combo.currentIndexChanged.connect(
             self.freq_control)
-        
+
 
         self.main_window.mix_btn.clicked.connect(self.mix_images)
         # Add references to image mix labels
@@ -115,7 +118,7 @@ class UIHandler:
         self.outpput_image = None
         self.gray_image = None
         self.kernel_size = 3
-        
+
         self.main_window.input_radio.clicked.connect(self.rgb_hist)
         self.main_window.output_radio.clicked.connect(self.rgb_hist)
 
@@ -186,7 +189,7 @@ class UIHandler:
             for item in scene.items():
                 if isinstance(item, QGraphicsPixmapItem):  # Ensure it's an image
                     print('Showing large image')
-                    
+
                     # Create a dialog
                     dialog = QDialog(self.main_window)
                     dialog.setWindowTitle("Large Image")
@@ -202,7 +205,7 @@ class UIHandler:
                     dialog.resize(650, 650)
 
                     # Show the dialog modally
-                    dialog.exec_()  
+                    dialog.exec_()
                     return  # Exit after showing the first found pixmap item
 
         print('No QGraphicsPixmapItem found in the scene')
@@ -325,6 +328,31 @@ class UIHandler:
         self.display_image(self.output_image_view, new_image)
         self.outpput_image = new_image
 
+    def detect_edges(self):
+        self.edge_detector.mask_selection = self.main_window.edge_detection_method_combo.currentText()
+        self.edge_detector.image = self.gray_image
+        gradient_magnitude = [[]]
+
+        if self.edge_detector.mask_selection == "Sobel":
+            Gx, Gy = self.edge_detector.sobel_kernel()
+            gradient_magnitude = np.sqrt(Gx ** 2 + Gy ** 2)
+
+        elif self.edge_detector.mask_selection == "Prewitt":
+            Gx, Gy = self.edge_detector.prewitt_kernel()
+            gradient_magnitude = np.sqrt(Gx ** 2 + Gy ** 2)
+
+        elif self.edge_detector.mask_selection == "Roberts":
+            Gx, Gy = self.edge_detector.roberts_kernel()
+            gradient_magnitude = np.sqrt(Gx ** 2 + Gy ** 2)
+
+        elif self.edge_detector.mask_selection == "Canny":
+            gradient_magnitude = self.edge_detector.canny_kernel(self.edge_detector.image)
+
+        # threshold = 200
+        gradient_magnitude = (gradient_magnitude / gradient_magnitude.max()) * 255
+        gradient_magnitude = gradient_magnitude.astype(np.uint8)
+        self.display_image(self.output_image_view, gradient_magnitude)
+
     def convert_to_grayscale(self, image):
         if len(image.shape) == 3:
             gray_image = RGB2GRAY.convert_to_grayscale(image)
@@ -393,7 +421,7 @@ class UIHandler:
         # Convert the normalized image to uint8
         image = np.array(normalized_image, dtype=np.uint8)
         return image
-    
+
         # display the image
         # self.display_image(self.output_image_view, image)
 
