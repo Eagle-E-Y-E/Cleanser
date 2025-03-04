@@ -320,7 +320,7 @@ class UIHandler:
         return QPixmap.fromImage(q_img)
 
     def equalize_image(self):
-        if len(self.image) == 3:
+        if len(self.image.shape) == 3:
             self.historgram_equalization(self.image, self.R_cdf, self.G_cdf, self.B_cdf)
             
         else:
