@@ -1196,22 +1196,22 @@ border-color: rgb(0, 0, 127);</string>
                <widget class="QComboBox" name="edge_detection_method_combo">
                 <item>
                  <property name="text">
-                  <string>sobel</string>
+                  <string>Sobel</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>perwitt</string>
+                  <string>Prewitt</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>roberts</string>
+                  <string>Roberts</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>canny</string>
+                  <string>Canny</string>
                  </property>
                 </item>
                </widget>

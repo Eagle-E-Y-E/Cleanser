@@ -6,7 +6,6 @@ def apply_average_filter(image, kernel_size=30):
     padded_image = np.pad(image, ((kernel_size//2, kernel_size//2), (kernel_size //
                           2, kernel_size//2), (0, 0)), mode='constant', constant_values=0)
     filtered_image = np.zeros_like(image)
-
     for i in range(image.shape[0]):
         for j in range(image.shape[1]):
             for k in range(image.shape[2]):
