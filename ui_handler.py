@@ -184,8 +184,11 @@ class UIHandler:
 
             self.image = cv2.imread(file_name, cv2.IMREAD_COLOR)
             self.gray_image = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
-            # if self.main_window.input_radio.isChecked():
-            # self.rgb_hist(self.image)
+            if self.main_window.input_radio.isChecked() and len(self.image.shape) == 3:
+                self.rgb_hist(self.image)
+            elif self.main_window.input_radio.isChecked() and len(self.image.shape) == 2:
+                self.equalize_image(self.image)
+                
     def show_large_image(self , histogram, event):
         scene = histogram.scene()  # Get the scene of the clicked histogram
         if scene is not None:
