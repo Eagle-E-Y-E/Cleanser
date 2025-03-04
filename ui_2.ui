@@ -1442,6 +1442,13 @@ border-color: rgb(0, 0, 127);</string>
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QPushButton" name="export_btn">
+                <property name="text">
+                 <string>Export</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>
