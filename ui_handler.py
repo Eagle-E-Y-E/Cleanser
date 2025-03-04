@@ -333,8 +333,9 @@ class UIHandler:
                 self.image, filter_type='low', D0=self.main_window.cuttoff_freq_slider.value())
         else:
             return
-        self.display_image(self.output_image_view, filtered_image)
         self.output_image = filtered_image
+        self.display_image(self.output_image_view, filtered_image)
+        
 
     def display_image(self, view, image):
         pixmap = self.convert_cv_to_pixmap(image)
@@ -350,6 +351,8 @@ class UIHandler:
                 self.is_output_gray = False
             elif len(image.shape) == 2:
                 self.is_output_gray = True
+
+            self.histogram_control() # update histograms
 
     def plot_histogram(self, data):
         fig, ax = plt.subplots(figsize=(5, 4), dpi=150)
@@ -397,8 +400,9 @@ class UIHandler:
     def equalize_grayscale(self):
         histogram, equalized_hist, new_image = HistogramEqualization.equalize(
             self.image)
-        self.display_image(self.output_image_view, new_image)
         self.output_image = new_image
+        self.display_image(self.output_image_view, new_image)
+        
 
     def detect_edges(self):
         self.edge_detector.mask_selection = self.main_window.edge_detection_method_combo.currentText()
@@ -424,8 +428,9 @@ class UIHandler:
         
         gradient_magnitude = (gradient_magnitude / gradient_magnitude.max()) * 255
         gradient_magnitude = gradient_magnitude.astype(np.uint8)
-        self.display_image(self.output_image_view, gradient_magnitude)
         self.output_image = gradient_magnitude
+        self.display_image(self.output_image_view, gradient_magnitude)
+        
 
     def convert_to_grayscale(self, image):
         if len(image.shape) == 3:
@@ -438,8 +443,9 @@ class UIHandler:
             return
 
         gray_image = self.convert_to_grayscale(self.image)
-        self.display_image(self.output_image_view, gray_image)
         self.output_image = gray_image
+        self.display_image(self.output_image_view, gray_image)
+        
 
     def apply_thresholding(self, image, threshold_value=128, window_size=15, sensitivity=2, type='global'):
         gray_image = self.convert_to_grayscale(image)
@@ -455,9 +461,9 @@ class UIHandler:
         else:
             return
 
-        
-        self.display_image(self.output_image_view, image)
         self.output_image = image
+        self.display_image(self.output_image_view, image)
+        
 
     def apply_frequency_filters(self, image, filter_type='high', D0=30):
         gray_image = self.convert_to_grayscale(image)
@@ -568,8 +574,9 @@ class UIHandler:
         ])
 
         # self.rgb_hist(equalized_image)
-        self.display_image(self.output_image_view, equalized_image)
         self.output_image = equalized_image
+        self.display_image(self.output_image_view, equalized_image)
+        
 
         return equalized_image
 
