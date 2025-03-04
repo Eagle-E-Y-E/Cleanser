@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1101</width>
-    <height>1017</height>
+    <height>1108</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1714,7 +1714,7 @@ QGroupBox::title {
                 <property name="minimumSize">
                  <size>
                   <width>250</width>
-                  <height>0</height>
+                  <height>300</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1745,7 +1745,7 @@ QGroupBox::title {
                 <property name="minimumSize">
                  <size>
                   <width>250</width>
-                  <height>0</height>
+                  <height>300</height>
                  </size>
                 </property>
                 <property name="maximumSize">
@@ -1773,14 +1773,32 @@ QGroupBox::title {
               </item>
               <item>
                <widget class="QLabel" name="output_img_mix">
+                <property name="minimumSize">
+                 <size>
+                  <width>250</width>
+                  <height>300</height>
+                 </size>
+                </property>
                 <property name="maximumSize">
                  <size>
                   <width>250</width>
                   <height>300</height>
                  </size>
                 </property>
+                <property name="frameShape">
+                 <enum>QFrame::WinPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Sunken</enum>
+                </property>
                 <property name="text">
                  <string>output</string>
+                </property>
+                <property name="scaledContents">
+                 <bool>true</bool>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
                </widget>
               </item>
