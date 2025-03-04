@@ -181,7 +181,7 @@ class UIHandler:
             self.image = cv2.imread(file_name, cv2.IMREAD_COLOR)
             self.gray_image = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
             # if self.main_window.input_radio.isChecked():
-            self.rgb_hist(self.image)
+            # self.rgb_hist(self.image)
     def show_large_image(self , histogram, event):
         scene = histogram.scene()  # Get the scene of the clicked histogram
         if scene is not None:
@@ -436,7 +436,7 @@ class UIHandler:
         # Extract frequency components
         low_frequencies = Hybrid.extract_low_frequencies(
             image1, kernel_size=kernel_size, sigma=sigma)
-        high_frequencies = Hybrid.extract_high_frequencies(image2)
+        high_frequencies = Hybrid.extract_high_frequencies(image2, kernel_size=kernel_size, sigma=sigma)
 
         # Combine frequencies
         hybrid_image = Hybrid.combine_frequencies(
