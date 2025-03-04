@@ -4,16 +4,6 @@ import numpy as np
 class Thresholding:
     @staticmethod
     def global_thresholding(image, threshold):
-        """
-        Apply global thresholding to a grayscale image.
-
-        Parameters:
-        - image: 2D list or array representing the grayscale image.
-        - threshold: Integer value for thresholding.
-
-        Returns:
-        - A new image array after applying global thresholding.
-        """
         # Apply thresholding using NumPy vectorization
         thresholded_image = (image > threshold) * 255
         # ensures the image has the correct data type for saving and displaying
@@ -22,17 +12,6 @@ class Thresholding:
 
     @staticmethod
     def local_thresholding(image, window_size, C):
-        """
-        Apply local adaptive thresholding to a grayscale image.
-
-        Parameters:
-        - image: 2D NumPy array representing the grayscale image.
-        - window_size: Size of the local window (must be an odd integer).
-        - C: Constant subtracted from the mean to fine-tune the threshold.
-
-        Returns:
-        - A new image array after applying local thresholding.
-        """
         # Ensure window size is odd
         # if window_size % 2 == 0:
         #     raise ValueError("window_size must be an odd integer.")
@@ -63,17 +42,6 @@ class Thresholding:
 
     @staticmethod
     def bradley_localThreshold(image, window_size=15, p=0.15):
-        """
-        Applies Bradley's thresholding to a grayscale image without using built-in functions.
-
-        Parameters:
-        - image: 2D NumPy array of the grayscale image.
-        - window_size: Size of the local window (must be an odd integer).
-        - p: Percentage parameter (positive value between 0 and 1).
-
-        Returns:
-        - binary_image: Thresholded binary image.
-        """
         height, width = image.shape
         half_size = window_size // 2
 

@@ -5,14 +5,6 @@ import numpy as np
 class RGB_Hist:
     @staticmethod
     def extract_rgb_channels(image, width, height):
-        """
-        Extracts R, G, and B channel values from the image.
-
-        Returns:
-        - R_values: List of all red channel values.
-        - G_values: List of all green channel values.
-        - B_values: List of all blue channel values.
-        """
         # Check if the image is RGB
         if len(image.shape) == 3 and image.shape[2] == 3:
             # The image is RGB (or BGR in OpenCV terms)
@@ -34,15 +26,6 @@ class RGB_Hist:
 
     @staticmethod
     def compute_histogram(channel_values):
-        """
-        Computes histogram of a channel without built-in functions.
-
-        Parameters:
-        - channel_values: List of intensity values for a channel.
-
-        Returns:
-        - histogram: List where index represents intensity value and value at index is the count.
-        """
         # Initialize histogram with zeros for all possible intensity values (0-255)
         histogram = [0] * 256
 
@@ -54,15 +37,6 @@ class RGB_Hist:
 
     @staticmethod
     def compute_cdf(histogram):
-        """
-        Computes the cumulative distribution function of a histogram.
-
-        Parameters:
-        - histogram: The histogram list.
-
-        Returns:
-        - cdf: Normalized cumulative distribution function as a list.
-        """
         cdf = []
         cumulative = 0
         total_pixels = sum(histogram)
@@ -90,13 +64,6 @@ class RGB_Hist:
 
     @staticmethod
     def plot_cdf(cdf, channel_name):
-        """
-        Plots the cumulative distribution function for the given channel using Matplotlib.
-
-        Parameters:
-        - cdf: The cumulative distribution function list.
-        - channel_name: Name of the color channel.
-        """
         plt.figure(figsize=(10, 4))
         plt.plot(range(256), cdf, color=channel_name.lower())
         plt.title(f'Cumulative Distribution Function for {channel_name} Channel')
@@ -109,14 +76,6 @@ class RGB_Hist:
 
     @staticmethod
     def plot_combined_histogram(R_histogram, G_histogram, B_histogram):
-        """
-        Plots the combined histograms of the R, G, and B channels.
-
-        Parameters:
-        - R_histogram: Histogram list for the Red channel.
-        - G_histogram: Histogram list for the Green channel.
-        - B_histogram: Histogram list for the Blue channel.
-        """
         plt.figure(figsize=(10, 4))
         plt.plot(range(256), R_histogram, color='red', label='Red')
         plt.plot(range(256), G_histogram, color='green', label='Green')
@@ -148,16 +107,6 @@ class RGB_Hist:
 
     @staticmethod
     def histogram_equalization(channel_values, cdf):
-        """
-        Applies histogram equalization to the channel values.
-
-        Parameters:
-        - channel_values: List of intensity values for a channel.
-        - cdf: Cumulative distribution function for the channel.
-
-        Returns:
-        - equalized_values: List of equalized intensity values.
-        """
         cdf_min = min(filter(lambda x: x > 0, cdf))  # Get the minimum non-zero value
         equalized_values = []
         for value in channel_values:

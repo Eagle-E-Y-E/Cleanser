@@ -3,15 +3,6 @@ import numpy as np
 class RGB2GRAY:
     @staticmethod
     def convert_to_grayscale(image):
-        """
-        Convert an image to grayscale using the standard luminance formula.
-
-        Parameters:
-        - image: The original BGR image as a NumPy array.
-
-        Returns:
-        - A new grayscale image as a NumPy array.
-        """
         # Ensure the image has three channels (BGR)
         if len(image.shape) != 3 or image.shape[2] != 3:
             raise ValueError("Input image must be a BGR image with 3 channels.")
