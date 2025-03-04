@@ -62,7 +62,7 @@ class UIHandler:
         self.main_window.apply_thresholding_btn.clicked.connect(
             self.thresholding_control)
         self.main_window.equalize_image_btn.clicked.connect(
-            self.equalize_image)
+            self.equalize_btn_call)
         self.main_window.detect_edges_btn.clicked.connect(self.detect_edges)
 
         # connect sliders to labels
@@ -338,8 +338,13 @@ class UIHandler:
             # Display in respective QGraphicsView widgets
             self.display_image(self.original_histogram, hist_pixmap)
             self.display_image(self.equalized_histogram, equalized_hist_pixmap)
-            self.display_image(self.output_image_view, new_image)
+            # self.display_image(self.output_image_view, new_image)
             self.outpput_image = new_image
+
+    def equalize_btn_call(self):
+         histogram, equalized_hist, new_image = HistogramEqualization.equalize(
+                self.gray_image)
+         self.display_image(self.output_image_view, new_image)
 
 
     def detect_edges(self):
