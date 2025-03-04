@@ -119,6 +119,10 @@ class UIHandler:
         self.gray_image = None
         self.kernel_size = 3
 
+        self.R_cdf = None
+        self.G_cdf = None
+        self.B_cdf = None
+
         self.main_window.input_radio.clicked.connect(self.rgb_hist)
         self.main_window.output_radio.clicked.connect(self.rgb_hist)
 
@@ -316,17 +320,21 @@ class UIHandler:
         return QPixmap.fromImage(q_img)
 
     def equalize_image(self):
-        histogram, equalized_hist, new_image = HistogramEqualization.equalize(
-            self.gray_image)
-        # Plot histograms as images
-        hist_pixmap = self.plot_histogram(histogram)
-        equalized_hist_pixmap = self.plot_histogram(equalized_hist)
+        if len(self.image) == 3:
+            self.historgram_equalization(self.image, self.R_cdf, self.G_cdf, self.B_cdf)
+            
+        else:
+            histogram, equalized_hist, new_image = HistogramEqualization.equalize(
+                self.gray_image)
+            # Plot histograms as images
+            hist_pixmap = self.plot_histogram(histogram)
+            equalized_hist_pixmap = self.plot_histogram(equalized_hist)
 
-        # Display in respective QGraphicsView widgets
-        self.display_image(self.original_histogram, hist_pixmap)
-        self.display_image(self.equalized_histogram, equalized_hist_pixmap)
-        self.display_image(self.output_image_view, new_image)
-        self.outpput_image = new_image
+            # Display in respective QGraphicsView widgets
+            self.display_image(self.original_histogram, hist_pixmap)
+            self.display_image(self.equalized_histogram, equalized_hist_pixmap)
+            self.display_image(self.output_image_view, new_image)
+            self.outpput_image = new_image
 
     def detect_edges(self):
         self.edge_detector.mask_selection = self.main_window.edge_detection_method_combo.currentText()
@@ -470,9 +478,9 @@ class UIHandler:
         B_histogram = RGB_Hist.compute_histogram(B_values)
 
         # Compute CDFs
-        R_cdf = RGB_Hist.compute_cdf(R_histogram)
-        G_cdf = RGB_Hist.compute_cdf(G_histogram)
-        B_cdf = RGB_Hist.compute_cdf(B_histogram)
+        self.R_cdf = RGB_Hist.compute_cdf(R_histogram)
+        self.G_cdf = RGB_Hist.compute_cdf(G_histogram)
+        self.B_cdf = RGB_Hist.compute_cdf(B_histogram)
 
         # Plot histograms and CDFs
         self.display_image(self.main_window.histogram_1,
@@ -482,10 +490,10 @@ class UIHandler:
         self.display_image(self.main_window.histogram_3,
                            RGB_Hist.plot_histogram(B_histogram, 'Blue'))
         self.display_image(self.main_window.histogram_4,
-                           RGB_Hist.plot_combined_cdf(R_cdf, G_cdf, B_cdf))
+                           RGB_Hist.plot_combined_cdf(self.R_cdf, self.G_cdf, self.B_cdf))
 
 
-        return R_cdf, G_cdf, B_cdf
+        # return R_cdf, G_cdf, B_cdf
 
     def historgram_equalization(self, image, R_cdf, G_cdf, B_cdf):
         # Get image dimensions
