@@ -23,7 +23,7 @@ class RGB_Hist:
 
             for y in range(height):
                 for x in range(width):
-                    B, G, R = image[y, x]  # OpenCV uses BGR format
+                    B, G, R , A = image[y, x]  # OpenCV uses BGR format
                     R_values.append(R)
                     G_values.append(G)
                     B_values.append(B)

@@ -16,6 +16,7 @@ from Freq_filters import Freq_filters
 from Hybrid import Hybrid
 import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import QDialog, QLabel, QVBoxLayout
+from PyQt5.QtCore import QTimer
 
 # ui_names:
 # - image1
@@ -62,7 +63,7 @@ class UIHandler:
         self.main_window.apply_thresholding_btn.clicked.connect(
             self.thresholding_control)
         self.main_window.equalize_image_btn.clicked.connect(
-            self.equalize_btn_call)
+            self.equalize_btn_ctrl)
         self.main_window.detect_edges_btn.clicked.connect(self.detect_edges)
 
         # connect sliders to labels
@@ -81,13 +82,15 @@ class UIHandler:
         self.main_window.cuttoff_freq_slider.valueChanged.connect(lambda: self.main_window.cuttofffreq_label.setText(
             f"{self.main_window.cuttoff_freq_slider.value()}"))
 
-
-        ## double click histograms to maximize
-        self.main_window.histogram_1.mouseDoubleClickEvent = lambda event: self.show_large_image(self.main_window.histogram_1, event)
-        self.main_window.histogram_2.mouseDoubleClickEvent = lambda event: self.show_large_image(self.main_window.histogram_2, event)
-        self.main_window.histogram_3.mouseDoubleClickEvent = lambda event: self.show_large_image(self.main_window.histogram_3, event)
-        self.main_window.histogram_4.mouseDoubleClickEvent = lambda event: self.show_large_image(self.main_window.histogram_4, event)
-
+        # double click histograms to maximize
+        self.main_window.histogram_1.mouseDoubleClickEvent = lambda event: self.show_large_image(
+            self.main_window.histogram_1, event)
+        self.main_window.histogram_2.mouseDoubleClickEvent = lambda event: self.show_large_image(
+            self.main_window.histogram_2, event)
+        self.main_window.histogram_3.mouseDoubleClickEvent = lambda event: self.show_large_image(
+            self.main_window.histogram_3, event)
+        self.main_window.histogram_4.mouseDoubleClickEvent = lambda event: self.show_large_image(
+            self.main_window.histogram_4, event)
 
         self.main_window.thresholding_combo.currentIndexChanged.connect(
             self.thresholding_control)
@@ -97,7 +100,6 @@ class UIHandler:
         self.main_window.cuttofffreq_widgwt.hide()
         self.main_window.filter_combo.currentIndexChanged.connect(
             self.freq_control)
-
 
         self.main_window.mix_btn.clicked.connect(self.mix_images)
         # Add references to image mix labels
@@ -123,10 +125,55 @@ class UIHandler:
         self.G_cdf = None
         self.B_cdf = None
 
-        # self.main_window.input_radio.clicked.connect(self.rgb_hist)
-        # self.main_window.output_radio.clicked.connect(self.rgb_hist)
+        self.main_window.output_radio.toggled.connect(self.histogram_control)
+        self.main_window.input_radio.toggled.connect(self.histogram_control)
 
+        self.is_input_gray = False
+        self.is_output_gray = False
 
+    def histogram_control(self):
+        if self.main_window.output_radio.isChecked():
+            if self.outpput_image is not None:
+                if self.is_output_gray:
+                    self.grayscale_hist(self.outpput_image)
+                    self.main_window.histogram_1.hide()
+                    self.main_window.histogram_2.show()
+                    self.main_window.histogram_3.hide()
+                    self.main_window.histogram_4.hide()
+                else:
+                    self.rgb_hist(self.outpput_image)
+                    self.main_window.histogram_1.show()
+                    self.main_window.histogram_2.show()
+                    self.main_window.histogram_3.show()
+                    self.main_window.histogram_4.show()
+            else:
+                QtWidgets.QMessageBox.warning(self.main_window, "Warning",
+                                              "Please apply a filter or noise to display the output histogram")
+                
+                # Use QTimer to delay the execution of the radio button state change
+                QTimer.singleShot(0, lambda: self.main_window.output_radio.setChecked(False))
+                QTimer.singleShot(0, lambda: self.main_window.input_radio.setChecked(True))
+
+        elif self.main_window.input_radio.isChecked():
+            if self.is_input_gray:
+                self.grayscale_hist(self.image)
+                self.main_window.histogram_1.show()
+                self.main_window.histogram_2.hide()
+                self.main_window.histogram_3.hide()
+                self.main_window.histogram_4.hide()
+            else:
+                self.rgb_hist(self.image)
+                self.main_window.histogram_1.show()
+                self.main_window.histogram_2.show()
+                self.main_window.histogram_3.show()
+                self.main_window.histogram_4.show()
+
+    def equalize_btn_ctrl(self):
+        if self.is_input_gray:
+            self.equalize_grayscale()
+        else:
+            self.RGB_historgram_equalization(self.image, self.R_cdf,
+                                             self.G_cdf, self.B_cdf)
 
     def open_image1_for_mixing(self, event):
         options = QtWidgets.QFileDialog.Options()
@@ -185,13 +232,13 @@ class UIHandler:
             self.image = cv2.imread(file_name, cv2.IMREAD_UNCHANGED)
             self.gray_image = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
             print(self.image.shape)
-            if self.main_window.input_radio.isChecked() and len(self.image.shape) == 3:
-                print('RGB')
-                self.rgb_hist(self.image)
-            elif self.main_window.input_radio.isChecked() and len(self.image.shape) == 2:
-                self.equalize_image()
-                
-    def show_large_image(self , histogram, event):
+            if len(self.image.shape) == 3:
+                self.is_input_gray = False
+            elif len(self.image.shape) == 2:
+                self.is_input_gray = True
+            self.histogram_control()
+
+    def show_large_image(self, histogram, event):
         scene = histogram.scene()  # Get the scene of the clicked histogram
         if scene is not None:
             # Iterate through the items in the scene to find the QGraphicsPixmapItem
@@ -206,7 +253,8 @@ class UIHandler:
 
                     # Create and set the QLabel with the scaled image
                     label = QLabel()
-                    label.setPixmap(item.pixmap().scaled(600, 600, Qt.KeepAspectRatio))
+                    label.setPixmap(item.pixmap().scaled(
+                        600, 600, Qt.KeepAspectRatio))
                     label.setAlignment(Qt.AlignCenter)
 
                     layout.addWidget(label)
@@ -278,9 +326,11 @@ class UIHandler:
         elif filter_type == 'median filter':
             filtered_image = apply_median_filter(self.image, self.kernel_size)
         elif filter_type == 'high pass filter':
-            filtered_image = self.apply_frequency_filters(self.image, filter_type='high', D0=self.main_window.cuttoff_freq_slider.value())
+            filtered_image = self.apply_frequency_filters(
+                self.image, filter_type='high', D0=self.main_window.cuttoff_freq_slider.value())
         elif filter_type == 'low pass filter':
-            filtered_image = self.apply_frequency_filters(self.image, filter_type='low', D0=self.main_window.cuttoff_freq_slider.value())
+            filtered_image = self.apply_frequency_filters(
+                self.image, filter_type='low', D0=self.main_window.cuttoff_freq_slider.value())
         else:
             return
         self.display_image(self.output_image_view, filtered_image)
@@ -293,6 +343,13 @@ class UIHandler:
         view.setScene(scene)
         view.fitInView(
             scene.itemsBoundingRect(), Qt.KeepAspectRatio)
+
+        # update output is gray?
+        if view == self.output_image_view:
+            if len(image.shape) == 3:
+                self.is_output_gray = False
+            elif len(image.shape) == 2:
+                self.is_output_gray = True
 
     def plot_histogram(self, data):
         fig, ax = plt.subplots(figsize=(5, 4), dpi=150)
@@ -324,28 +381,24 @@ class UIHandler:
 
         return QPixmap.fromImage(q_img)
 
-    def equalize_image(self):
-        if len(self.image.shape) == 3:
-            self.historgram_equalization(self.image, self.R_cdf, self.G_cdf, self.B_cdf)
-            
-        else:
-            histogram, equalized_hist, new_image = HistogramEqualization.equalize(
-                self.gray_image)
-            # Plot histograms as images
-            hist_pixmap = self.plot_histogram(histogram)
-            equalized_hist_pixmap = self.plot_histogram(equalized_hist)
+    def grayscale_hist(self, image):
+        histogram, equalized_hist, new_image = HistogramEqualization.equalize(
+            image)
+        # Plot histograms as images
+        hist_pixmap = self.plot_histogram(histogram)
+        equalized_hist_pixmap = self.plot_histogram(equalized_hist)
 
-            # Display in respective QGraphicsView widgets
-            self.display_image(self.original_histogram, hist_pixmap)
-            self.display_image(self.equalized_histogram, equalized_hist_pixmap)
-            # self.display_image(self.output_image_view, new_image)
-            self.outpput_image = new_image
+        # Display in respective QGraphicsView widgets
+        self.display_image(self.equalized_histogram, equalized_hist_pixmap)
+        self.display_image(self.original_histogram, hist_pixmap)
 
-    def equalize_btn_call(self):
-         histogram, equalized_hist, new_image = HistogramEqualization.equalize(
-                self.gray_image)
-         self.display_image(self.output_image_view, new_image)
+        # self.outpput_image = new_image
 
+    def equalize_grayscale(self, image):
+        histogram, equalized_hist, new_image = HistogramEqualization.equalize(
+            image)
+        self.display_image(self.output_image_view, new_image)
+        self.outpput_image = new_image
 
     def detect_edges(self):
         self.edge_detector.mask_selection = self.main_window.edge_detection_method_combo.currentText()
@@ -365,12 +418,15 @@ class UIHandler:
             gradient_magnitude = np.sqrt(Gx ** 2 + Gy ** 2)
 
         elif self.edge_detector.mask_selection == "Canny":
-            gradient_magnitude = self.edge_detector.canny_kernel(self.edge_detector.image)
+            gradient_magnitude = self.edge_detector.canny_kernel(
+                self.edge_detector.image)
 
         # threshold = 200
-        gradient_magnitude = (gradient_magnitude / gradient_magnitude.max()) * 255
+        gradient_magnitude = (gradient_magnitude /
+                              gradient_magnitude.max()) * 255
         gradient_magnitude = gradient_magnitude.astype(np.uint8)
         self.display_image(self.output_image_view, gradient_magnitude)
+        self.outpput_image = gradient_magnitude
 
     def convert_to_grayscale(self, image):
         if len(image.shape) == 3:
@@ -455,7 +511,8 @@ class UIHandler:
         # Extract frequency components
         low_frequencies = Hybrid.extract_low_frequencies(
             image1, kernel_size=kernel_size, sigma=sigma)
-        high_frequencies = Hybrid.extract_high_frequencies(image2, kernel_size=kernel_size, sigma=sigma)
+        high_frequencies = Hybrid.extract_high_frequencies(
+            image2, kernel_size=kernel_size, sigma=sigma)
 
         # Combine frequencies
         hybrid_image = Hybrid.combine_frequencies(
@@ -503,10 +560,9 @@ class UIHandler:
         self.display_image(self.main_window.histogram_4,
                            RGB_Hist.plot_combined_cdf(self.R_cdf, self.G_cdf, self.B_cdf))
 
-
         # return R_cdf, G_cdf, B_cdf
 
-    def historgram_equalization(self, image, R_cdf, G_cdf, B_cdf):
+    def RGB_historgram_equalization(self, image, R_cdf, G_cdf, B_cdf):
         # Get image dimensions
         height, width, channels = image.shape
         R_values, G_values, B_values = RGB_Hist.extract_rgb_channels(
@@ -524,7 +580,8 @@ class UIHandler:
             np.array(R_equalized, dtype=np.uint8).reshape(height, width)
         ])
 
-        self.rgb_hist(equalized_image)
+        # self.rgb_hist(equalized_image)
         self.display_image(self.output_image_view, equalized_image)
+        self.outpput_image = equalized_image
 
         return equalized_image
