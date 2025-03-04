@@ -3,16 +3,6 @@ import numpy as np
 class Hybrid:
     @staticmethod
     def generate_gaussian_kernel(size, sigma):
-        """
-        Generate a square Gaussian kernel.
-
-        Parameters:
-        - size: Kernel size (must be an odd integer).
-        - sigma: Standard deviation of the Gaussian.
-
-        Returns:
-        - kernel: 2D list representing the Gaussian kernel.
-        """
         ax = np.arange(-size // 2 + 1., size // 2 + 1.)
         xx, yy = np.meshgrid(ax, ax)
         kernel = np.exp(-(xx**2 + yy**2) / (2. * sigma**2))
@@ -21,16 +11,6 @@ class Hybrid:
 
     @staticmethod
     def convolve_image(image, kernel):
-        """
-        Apply convolution between an image and a kernel.
-
-        Parameters:
-        - image: 2D or 3D numpy array of the image.
-        - kernel: 2D list representing the kernel.
-
-        Returns:
-        - convolved_image: numpy array of the filtered image.
-        """
         # Ensure kernel is a NumPy array
         kernel = np.array(kernel)
         k_size = kernel.shape[0]
@@ -72,15 +52,6 @@ class Hybrid:
 
     @staticmethod
     def extract_low_frequencies(image, kernel_size = 15, sigma = 5):
-        """
-        Extract low frequencies using Gaussian blur.
-
-        Parameters:
-        - image: 2D or 3D numpy array of the image.
-
-        Returns:
-        - low_frequencies: numpy array of the low-frequency components.
-        """
         print(kernel_size)
         print(sigma)
         gaussian_kernel = Hybrid.generate_gaussian_kernel(kernel_size, sigma)
@@ -89,15 +60,6 @@ class Hybrid:
 
     @staticmethod
     def extract_high_frequencies(image, kernel_size = 15, sigma = 5):
-        """
-        Extract high frequencies by subtracting the blurred image from the original.
-
-        Parameters:
-        - image: 2D or 3D numpy array of the image.
-
-        Returns:
-        - high_frequencies: numpy array of the high-frequency components.
-        """
         low_frequencies = Hybrid.extract_low_frequencies(image, kernel_size=kernel_size, sigma=sigma)
         high_frequencies = image - low_frequencies
         return high_frequencies
@@ -105,16 +67,6 @@ class Hybrid:
     
     @staticmethod
     def combine_frequencies(low_freq_image, high_freq_image):
-        """
-        Combine low and high frequency components.
-
-        Parameters:
-        - low_freq_image: 2D numpy array of low-frequency image.
-        - high_freq_image: 2D numpy array of high-frequency image.
-
-        Returns:
-        - hybrid_image: 2D numpy array of the hybrid image.
-        """
         hybrid_image = low_freq_image + high_freq_image
 
         # Clip values to valid range [0, 255]
