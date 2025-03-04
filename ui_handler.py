@@ -123,8 +123,8 @@ class UIHandler:
         self.G_cdf = None
         self.B_cdf = None
 
-        self.main_window.input_radio.clicked.connect(self.rgb_hist)
-        self.main_window.output_radio.clicked.connect(self.rgb_hist)
+        # self.main_window.input_radio.clicked.connect(self.rgb_hist)
+        # self.main_window.output_radio.clicked.connect(self.rgb_hist)
 
 
 
@@ -184,9 +184,11 @@ class UIHandler:
 
             self.image = cv2.imread(file_name, cv2.IMREAD_COLOR)
             self.gray_image = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
-            if self.main_window.input_radio.isChecked() and len(self.image.shape) == 3:
+            print(self.image.shape)
+            if self.main_window.input_radio.isChecked() and self.image.shape[2] == 3:
+                print('RGB')
                 self.rgb_hist(self.image)
-            elif self.main_window.input_radio.isChecked() and len(self.image.shape) == 2:
+            elif self.main_window.input_radio.isChecked() and self.image.shape[2] == 2:
                 self.equalize_image(self.image)
                 
     def show_large_image(self , histogram, event):
@@ -516,6 +518,7 @@ class UIHandler:
             np.array(R_equalized, dtype=np.uint8).reshape(height, width)
         ])
 
-        RGB_Hist(equalized_image)
+        self.rgb_hist(equalized_image)
+        self.display_image(self.output_image_view, equalized_image)
 
         return equalized_image
