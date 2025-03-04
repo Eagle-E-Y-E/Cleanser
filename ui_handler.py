@@ -182,14 +182,14 @@ class UIHandler:
                 self.image_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
             self.image_label.setScaledContents(False)
 
-            self.image = cv2.imread(file_name, cv2.IMREAD_COLOR)
+            self.image = cv2.imread(file_name, cv2.IMREAD_UNCHANGED)
             self.gray_image = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
             print(self.image.shape)
-            if self.main_window.input_radio.isChecked() and self.image.shape[2] == 3:
+            if self.main_window.input_radio.isChecked() and len(self.image.shape) == 3:
                 print('RGB')
                 self.rgb_hist(self.image)
-            elif self.main_window.input_radio.isChecked() and self.image.shape[2] == 2:
-                self.equalize_image(self.image)
+            elif self.main_window.input_radio.isChecked() and len(self.image.shape) == 2:
+                self.equalize_image()
                 
     def show_large_image(self , histogram, event):
         scene = histogram.scene()  # Get the scene of the clicked histogram
@@ -340,6 +340,7 @@ class UIHandler:
             self.display_image(self.equalized_histogram, equalized_hist_pixmap)
             self.display_image(self.output_image_view, new_image)
             self.outpput_image = new_image
+
 
     def detect_edges(self):
         self.edge_detector.mask_selection = self.main_window.edge_detection_method_combo.currentText()
