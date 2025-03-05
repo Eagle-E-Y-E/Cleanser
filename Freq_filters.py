@@ -36,37 +36,18 @@ class Freq_filters:
         # Apply 2D inverse FFT using NumPy
         image = np.fft.ifft2(F)
         return image.real  # Return the real part
-
+    
     @staticmethod
     def normalize_image(image):
-        M = len(image)
-        N = len(image[0])
-        min_val = min([min(row) for row in image])
-        max_val = max([max(row) for row in image])
-        normalized = [[0 for _ in range(N)] for _ in range(M)]
-        for y in range(M):
-            for x in range(N):
-                normalized[y][x] = ((image[y][x] - min_val) / (max_val - min_val)) * 255
-        return normalized
-    
-    # @staticmethod
-    # def normalize_image(image):
-    #     # Convert the image to a numpy array if it's not already
-    #     image = np.array(image)
+        # Convert the image to a numpy array if it's not already
+        image = np.array(image)
         
-    #     # Get the minimum and maximum values from the image
-    #     min_val = np.min(image)
-    #     max_val = np.max(image)
+        # Get the minimum and maximum values from the image
+        min_val = np.min(image)
+        max_val = np.max(image)
         
-    #     # Normalize the image using vectorized operations
-    #     normalized = ((image - min_val) / (max_val - min_val)) * 255
+        # Normalize the image using vectorized operations
+        normalized = ((image - min_val) / (max_val - min_val)) * 255
         
-    #     # Return the normalized image
-    #     return normalized.astype(np.uint8)
-
-
-    # @staticmethod
-    # def normalize_image(image):
-    #     # Normalize the image to the range 0-255
-    #     normalized = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX)
-    #     return normalized
+        # Return the normalized image
+        return normalized.astype(np.uint8)

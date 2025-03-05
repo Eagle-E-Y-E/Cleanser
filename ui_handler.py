@@ -65,6 +65,7 @@ class UIHandler:
             self.equalize_btn_ctrl)
         self.main_window.detect_edges_btn.clicked.connect(self.detect_edges)
         self.main_window.export_btn.clicked.connect(self.export)
+        self.main_window.normalize_btn.clicked.connect(self.normalize)
 
         
         self.main_window.noise_intensity_slider.valueChanged.connect(lambda: self.main_window.noise_intensity_label.setText(
@@ -237,6 +238,8 @@ class UIHandler:
             elif len(self.image.shape) == 2:
                 self.is_input_gray = True
             self.histogram_control()
+            if self.output_image_view.scene():
+                self.output_image_view.scene().clear()
 
     def show_large_image(self, histogram, event):
         scene = histogram.scene()  # Get the scene of the clicked histogram
