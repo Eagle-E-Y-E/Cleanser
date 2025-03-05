@@ -107,9 +107,10 @@ class RGB_Hist:
 
     @staticmethod
     def histogram_equalization(channel_values, cdf):
-        cdf_min = min(filter(lambda x: x > 0, cdf))  # Get the minimum non-zero value
-        equalized_values = []
-        for value in channel_values:
-            equalized_value = round((cdf[value] - cdf_min) / (1 - cdf_min) * 255)
-            equalized_values.append(equalized_value)
+        cdf = np.array(cdf)
+        cdf_min = np.min(cdf[cdf > 0])  # Get the minimum non-zero value
+        
+        # Apply histogram equalization formula using NumPy vectorized operations
+        equalized_values = np.round((cdf[channel_values] - cdf_min) / (1 - cdf_min) * 255).astype(np.uint8)
+        print(equalized_values[:5])
         return equalized_values
