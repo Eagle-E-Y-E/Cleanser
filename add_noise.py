@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 
 
 def add_gaussian_noise(image, mean=0, sigma=25):
-    noisy = image + np.random.normal(mean, sigma, image.shape)
+    sigma = sigma * 2.55  # Convert to [0, 255] range
+    noisy = image + np.random.normal(mean, sigma, image.shape) # guassian = normal distribution
     return np.clip(noisy, 0, 255).astype(np.uint8)
 
 
@@ -26,5 +27,6 @@ def add_salt_pepper_noise(image, salt_prob=0.02, pepper_prob=0.02):
 
 
 def add_uniform_noise(image, intensity=50):
+    intensity = intensity * 2.55  # Convert to [0, 255] range
     noisy = image + np.random.uniform(-intensity, intensity, image.shape)
     return np.clip(noisy, 0, 255).astype(np.uint8)

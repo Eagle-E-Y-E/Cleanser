@@ -310,9 +310,10 @@ class UIHandler:
                 self.image, intensity=noise_intensity)
         else:
             return
-
-        self.display_image(self.output_image_view, noisy_image)
+        
         self.output_image = noisy_image
+        self.display_image(self.output_image_view, noisy_image)
+        
 
     def apply_filter(self):
         if self.image is None:
