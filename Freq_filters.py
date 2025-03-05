@@ -48,6 +48,22 @@ class Freq_filters:
             for x in range(N):
                 normalized[y][x] = ((image[y][x] - min_val) / (max_val - min_val)) * 255
         return normalized
+    
+    # @staticmethod
+    # def normalize_image(image):
+    #     # Convert the image to a numpy array if it's not already
+    #     image = np.array(image)
+        
+    #     # Get the minimum and maximum values from the image
+    #     min_val = np.min(image)
+    #     max_val = np.max(image)
+        
+    #     # Normalize the image using vectorized operations
+    #     normalized = ((image - min_val) / (max_val - min_val)) * 255
+        
+    #     # Return the normalized image
+    #     return normalized.astype(np.uint8)
+
 
     # @staticmethod
     # def normalize_image(image):

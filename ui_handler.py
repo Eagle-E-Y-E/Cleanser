@@ -489,9 +489,6 @@ class UIHandler:
         image = np.array(normalized_image, dtype=np.uint8)
         return image
 
-        
-        
-
     def hybrid_image(self, image1, image2, kernel_size, sigma):
         
         image1 = cv2.resize(image1, (256, 256))
@@ -598,3 +595,9 @@ class UIHandler:
                     height, width = self.output_image.shape
                     qimg = QImage(self.output_image.data, width, height, width, QImage.Format_Grayscale8)                    
             qimg.save(file_path)
+
+    def normalize(self):
+        if self.image is None:
+            return
+        self.output_image = Freq_filters.normalize_image(self.image)
+        self.display_image(self.output_image_view, self.output_image)
