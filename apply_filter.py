@@ -15,7 +15,7 @@ def apply_average_filter(image, kernel_size=30):
     return np.clip(filtered_image, 0, 255).astype(np.uint8)
 
 
-def apply_gaussian_filter(image, kernel_size=3, sigma=1):
+def apply_gaussian_filter(image, kernel_size=3, sigma=100):
 
     ax = np.linspace(-(kernel_size // 2), kernel_size // 2,
                      kernel_size)  # Generate a Gaussian kernel
