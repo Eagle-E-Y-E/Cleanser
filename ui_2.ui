@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1177</width>
-    <height>1133</height>
+    <height>1158</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -375,7 +375,7 @@ QScrollBar::right-arrow:horizontal {
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>Tab 1</string>
+        <string>main</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
@@ -1705,7 +1705,7 @@ QGroupBox::title {
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
-        <string>Tab 2</string>
+        <string>mixing</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>

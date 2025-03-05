@@ -151,6 +151,7 @@ class UIHandler:
                 QtWidgets.QMessageBox.warning(self.main_window, "Warning",
                                               "Please apply a filter or noise to display the output histogram")
                 
+                
                 # Use QTimer to delay the execution of the radio button state change
                 QTimer.singleShot(0, lambda: self.main_window.output_radio.setChecked(False))
                 QTimer.singleShot(0, lambda: self.main_window.input_radio.setChecked(True))
@@ -237,9 +238,11 @@ class UIHandler:
                 self.is_input_gray = False
             elif len(self.image.shape) == 2:
                 self.is_input_gray = True
+            self.output_image = None
             self.histogram_control()
             if self.output_image_view.scene():
                 self.output_image_view.scene().clear()
+            
 
     def show_large_image(self, histogram, event):
         scene = histogram.scene()  # Get the scene of the clicked histogram
@@ -439,8 +442,8 @@ class UIHandler:
     def convert_to_grayscale(self, image):
         if len(image.shape) == 3:
             gray_image = RGB2GRAY.convert_to_grayscale(image)
-
-        return gray_image
+            return gray_image
+        return image
 
     def apply_grayscale(self):
         if self.image is None:
