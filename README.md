@@ -1,8 +1,8 @@
-# Task1-Image-filtration
+# Cleanser
 
 ## 🖼️ Overview
 
-**Task1-Image-filtration** is a Python-based application designed for applying various image processing techniques. It provides functionalities such as grayscale conversion, histogram equalization, noise addition, filtering, edge detection, thresholding, and hybrid image creation. The application features a graphical user interface (GUI) for user-friendly interaction.
+**Cleanser** is a Python-based application designed for applying various image processing techniques. It provides functionalities such as grayscale conversion, histogram equalization, noise addition, filtering, edge detection, thresholding, and hybrid image creation. The application features a graphical user interface (GUI) for user-friendly interaction.
 ![image](https://github.com/user-attachments/assets/d5acd921-1e94-4d21-a94e-d82edc63b691)
 
 ## ✨ Features
