@@ -3,6 +3,7 @@
 ## 🖼️ Overview
 
 **Task1-Image-filtration** is a Python-based application designed for applying various image processing techniques. It provides functionalities such as grayscale conversion, histogram equalization, noise addition, filtering, edge detection, thresholding, and hybrid image creation. The application features a graphical user interface (GUI) for user-friendly interaction.
+![image](https://github.com/user-attachments/assets/d5acd921-1e94-4d21-a94e-d82edc63b691)
 
 ## ✨ Features
 
@@ -69,53 +70,9 @@
 - `Freq_filters.py`: Applies frequency domain filters.
 - `images/`: Directory containing sample images.
 - `report/`: Contains project reports and documentation.
-
-## 🧪 Testing
-
-*If you have implemented tests:*
-
-- **Run Tests**:
-
-  ```bash
-  python -m unittest discover tests
-  ```
-
-  *Ensure that a `tests/` directory exists with appropriate test cases.*
-
 ## 📌 Future Enhancements
 
 - Implement additional image processing techniques.
 - Enhance the GUI with more features and better user experience.
 - Optimize performance for processing large images.
 - Add support for batch processing of images.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch:
-
-   ```bash
-   git checkout -b feature/YourFeature
-   ```
-
-3. Commit your changes:
-
-   ```bash
-   git commit -m "Add YourFeature"
-   ```
-
-4. Push to the branch:
-
-   ```bash
-   git push origin feature/YourFeature
-   ```
-
-5. Open a pull request.
-
-## 📄 License
-
-*Specify the license under which the project is distributed. For example:*
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
