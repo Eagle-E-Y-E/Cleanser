@@ -8,9 +8,41 @@
 ## ✨ Features
 
 - **Grayscale Conversion**: Transform RGB images to grayscale.
+ <div align="center">
+   <img src="https://github.com/Eagle-E-Y-E/Cleanser/blob/main/report/grayscale.png" width="300" alt="grayscale.png">
+</div>
+
 - **Histogram Equalization**: Enhance image contrast using histogram equalization.
+  <div align="center">
+   <img src="https://github.com/Eagle-E-Y-E/Cleanser/blob/main/report/main.png" width="800" alt="equalization">
+</div>
+
 - **Noise Addition**: Introduce different types of noise to images for testing.
+<div align="center">
+   <img src="https://github.com/Eagle-E-Y-E/Cleanser/blob/main/report/gaussian.png" width="200" alt="equalization">
+</div>
+
 - **Filtering Techniques**: Apply various filters to images.
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="https://github.com/Eagle-E-Y-E/Cleanser/blob/main/report/avg_filter.png" width="200"><br>
+      <small>Average Filter</small>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Eagle-E-Y-E/Cleanser/blob/main/report/gaussian_filter.png" width="200"><br>
+      <small>Gaussian Filter</small>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Eagle-E-Y-E/Cleanser/blob/main/report/med_filter.png" width="200"><br>
+      <small>Median Filter</small>
+    </td>
+  </tr>
+</table>
+
+
+
 - **Edge Detection**: Detect edges within images.
 - **Thresholding**: Apply thresholding techniques to segment images.
 - **Hybrid Image Creation**: Combine images to create hybrid visuals.
